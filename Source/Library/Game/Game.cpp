@@ -16,10 +16,11 @@ namespace library
 	  TODO: Game::Game definition (remove the comment)
 	--------------------------------------------------------------------*/
 
-	Game::Game(_In_ PCWSTR pszGameName)
-	{
-
-	}
+	Game::Game(_In_ PCWSTR pszGameName) :
+		m_pszGameName(pszGameName),
+		m_mainWindow(std::make_unique<library::MainWindow>()),
+		m_renderer(std::make_unique<library::Renderer>())
+	{ }
 
 	/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
 	  Method:   Game::Initialize
@@ -43,36 +44,19 @@ namespace library
 
 	HRESULT Game::Initialize(_In_ HINSTANCE hInstance, _In_ INT nCmdShow)
 	{
-		// Register class
-		WNDCLASSEX wcex;
-		wcex.cbSize = sizeof(WNDCLASSEX);
-		wcex.style = CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc = DefWindowProc;
-		wcex.cbClsExtra = 0;
-		wcex.cbWndExtra = 0;
-		wcex.hInstance = hInstance;
-		wcex.hIcon = LoadIcon(hInstance, (LPCTSTR)IDI_TUTORIAL1);
-		wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-		wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-		wcex.lpszMenuName = nullptr;
-		wcex.lpszClassName = L"Game Graphics Programming";
-		wcex.hIconSm = LoadIcon(wcex.hInstance, (LPCTSTR)IDI_TUTORIAL1);
-		if (!RegisterClassEx(&wcex))
-			return E_FAIL;
+		HRESULT hr = S_OK;
 
-		// Create window
-		hInst = hInstance;
-		RECT rc = { 0, 0, 800, 600 };
-		AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-		hWnd = CreateWindow(L"Game Graphics Programming", L"Game Graphics Programming Lab 01:Direct3D 11 Basics",
-			WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
-			CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
-			nullptr);
-		if (!hWnd)
-			return E_FAIL;
+		hr = (m_mainWindow->Initialize(hInstance, nCmdShow, m_pszGameName));
+		if (FAILED(hr))
+			return hr;
 
-		ShowWindow(hWnd, nCmdShow);
+		HWND m_hWnd;
 
+		m_hWnd = m_mainWindow->GetWindow();
+
+		hr = m_renderer->Initialize(m_hWnd);
+		if (FAILED(hr))
+			return hr;
 	}
 
 	/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -99,8 +83,7 @@ namespace library
 			}
 			else
 			{
-				Renderer render; // 
-				render.Render();
+				m_renderer->Render();
 			}
 		}
 

@@ -98,7 +98,7 @@ namespace library
       TODO: BaseWindow<DerivedType>::WindowProc definition (remove the comment)
     --------------------------------------------------------------------*/
 
-    template <class DerivedType> 
+    template<class DerivedType> 
 
     LRESULT BaseWindow<DerivedType>::WindowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
     {
@@ -108,7 +108,7 @@ namespace library
         {
             CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*> (lParam);
             pThis = reinterpret_cast<DerivedType*> (pCreate->lpCreateParams);
-            setWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
+            SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
             pThis->m_hWnd = hWnd; 
         }
         else
@@ -120,7 +120,10 @@ namespace library
         {
             return pThis->HandleMessage(uMsg, wParam, lParam);
         }
-        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        else
+        {
+            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        }
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -132,12 +135,15 @@ namespace library
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     /*--------------------------------------------------------------------
       TODO: BaseWindow<DerivedType>::BaseWindow definition (remove the comment)
-    --------------------------------------------------------------------*/j
+    --------------------------------------------------------------------*/
 
     template <class DerivedType>
-    BaseWindow<DerivedType>::BaseWindow() : m_hWnd(NULL)
+    BaseWindow<DerivedType>::BaseWindow() :
+        m_hInstance(nullptr),
+        m_hWnd(nullptr),
+        m_pszWindowName(L"Default")
     { }
-
+        
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
         Method:   BaseWindow<DerivedType>::GetWindow()
 
@@ -153,7 +159,7 @@ namespace library
     template <class DerivedType>
     HWND BaseWindow<DerivedType>::GetWindow() const
     {
-        return m_hwnd; 
+        return m_hWnd; 
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -205,17 +211,29 @@ namespace library
         _In_opt_ HWND hWndParent,
         _In_opt_ HMENU hMenu)
     {
-        WNDCLASS wc = { 0 };
+        WNDCLASSEX wcex;
+        wcex.cbSize = sizeof(WNDCLASSEX);
+        wcex.style = CS_HREDRAW | CS_VREDRAW;
+        wcex.lpfnWndProc = DerivedType::WindowProc;
+        wcex.cbClsExtra = 0;
+        wcex.cbWndExtra = 0;
+        wcex.hInstance = hInstance;
+        wcex.hIcon = LoadIcon(hInstance, (LPCTSTR)IDI_TUTORIAL1);
+        wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+        wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+        wcex.lpszMenuName = nullptr;
+        wcex.lpszClassName = GetWindowClassName();
+        wcex.hIconSm = LoadIcon(wcex.hInstance, (LPCTSTR)IDI_TUTORIAL1);
+        if (!RegisterClassEx(&wcex))
+            return E_FAIL;
 
-        wc.lpfnWndProc = DerivedType::WindowProc;
-        wc.hInstance = GetModuleHandle(NULL);
-        wc.lpszClassName = GetWindowClassName();
+        m_hInstance = hInstance;
+        m_hWnd = CreateWindow(GetWindowClassName(), pszWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu, hInstance, this);
+        if (!m_hWnd)
+            return E_FAIL;
 
-        RegisterClass(&wc);
+        ShowWindow(m_hWnd, nCmdShow);
 
-        m_hWnd = CreateWindowExW(dwStyle, GetWindowClassName(), lpWindowName, dwStype, x, y, nWidth, nHeight, hWndParent, hMenu, GetModuleHandle(NULL), this);
-
-        return (m_hWnd ? TRUE : FALSE);
+        return S_OK;
     }
-
 }

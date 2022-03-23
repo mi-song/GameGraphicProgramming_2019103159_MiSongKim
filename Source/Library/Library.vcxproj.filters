@@ -34,13 +34,13 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Renderer.h">
-      <Filter>Source Files\Renderer</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Window\BaseWindow.h">
-      <Filter>Source Files\Window</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Window\MainWindow.h">
-      <Filter>Source Files\Window</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

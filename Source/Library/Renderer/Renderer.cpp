@@ -18,7 +18,8 @@ namespace library
     Renderer::Renderer() : 
         m_driverType(D3D_DRIVER_TYPE_NULL), 
         m_featureLevel(D3D_FEATURE_LEVEL_11_0), 
-        m_d3dDevice(nullptr), m_d3dDevice1(nullptr),
+        m_d3dDevice(nullptr), 
+        m_d3dDevice1(nullptr),
         m_immediateContext(nullptr), 
         m_immediateContext1(nullptr), 
         m_swapChain(nullptr), 

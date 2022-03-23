@@ -57,6 +57,8 @@ namespace library
 		hr = m_renderer->Initialize(m_hWnd);
 		if (FAILED(hr))
 			return hr;
+
+		return S_OK;
 	}
 
 	/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M

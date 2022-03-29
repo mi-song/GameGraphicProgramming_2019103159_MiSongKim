@@ -259,9 +259,9 @@ namespace library
         // Create vertex buffer
         SimpleVertex vertices[] =
         {
-            XMFLOAT3(0.0f, 0.5f, 0.5f),
-            XMFLOAT3(0.5f, -0.5f, 0.5f),
-            XMFLOAT3(-0.5f, -0.5f, 0.5f),
+            { XMFLOAT3(0.0f, 0.5f, 0.5f) },
+            { XMFLOAT3(0.5f, -0.5f, 0.5f) },
+            { XMFLOAT3(-0.5f, -0.5f, 0.5f) },
         };
 
         D3D11_BUFFER_DESC bd =

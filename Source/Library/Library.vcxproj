@@ -69,7 +69,7 @@
 copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Debug"</Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -101,7 +101,7 @@ copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Debug"</Command>
 copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Release"</Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <FxCompile>
       <ShaderType>Effect</ShaderType>

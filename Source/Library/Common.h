@@ -11,6 +11,9 @@
 ===================================================================+*/
 #pragma once
 
+#pragma comment(lib, "d3dcompiler.lib")
+#pragma comment(lib, "d3d11.lib")
+
 #ifndef  UNICODE
 #define UNICODE
 #endif // ! UNICODE

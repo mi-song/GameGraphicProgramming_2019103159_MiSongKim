@@ -13,7 +13,7 @@ namespace library
                   m_pixelShader, m_vertexLayout, m_vertexBuffer].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
 
-    Renderer::Renderer() 
+    Renderer::Renderer()
         : m_driverType(D3D_DRIVER_TYPE_NULL)
         , m_featureLevel(D3D_FEATURE_LEVEL_11_0)
         , m_d3dDevice(nullptr)
@@ -27,6 +27,11 @@ namespace library
         , m_pixelShader(nullptr)
         , m_vertexLayout(nullptr)
         , m_vertexBuffer(nullptr)
+        , m_indexBuffer(nullptr)
+        , m_constantBuffer(nullptr)
+        , m_World()
+        , m_View()
+        , m_Projection()
     { }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -39,7 +44,7 @@ namespace library
 
       Modifies: [m_d3dDevice, m_featureLevel, m_immediateContext,
                   m_d3dDevice1, m_immediateContext1, m_swapChain1,
-                  m_swapChain, m_renderTargetView, m_vertexShader, 
+                  m_swapChain, m_renderTargetView, m_vertexShader,
                   m_vertexLayout, m_pixelShader, m_vertexBuffer].
 
       Returns:  HRESULT
@@ -54,6 +59,22 @@ namespace library
         GetClientRect(hWnd, &rc);
         UINT width = rc.right - static_cast<UINT>(rc.left);
         UINT height = rc.bottom - static_cast<UINT>(rc.top);
+
+        POINT p1, p2;
+        p1.x = rc.left;
+        p1.y = rc.top;
+        p2.x = rc.right;
+        p2.y = rc.bottom;
+
+        ClientToScreen(hWnd, &p1);
+        ClientToScreen(hWnd, &p2);
+
+        rc.left = p1.x;
+        rc.top = p1.y;
+        rc.right = p2.x;
+        rc.bottom = p2.y;
+
+        ClipCursor(&rc);
 
         UINT createDeviceFlags = 0;
 
@@ -127,7 +148,7 @@ namespace library
             DXGI_SWAP_CHAIN_DESC1 sd =
             {
                 .Width = width,
-                .Height = height, 
+                .Height = height,
                 .Format = DXGI_FORMAT_R8G8B8A8_UNORM,
                 .SampleDesc =
                 {
@@ -209,7 +230,7 @@ namespace library
 
         // Compile the vertex shader
         ComPtr<ID3DBlob>           pVSBlob(nullptr);
-        hr = compileShaderFromFile(L"../Library/Shaders/Lab03.fxh", "VS", "vs_5_0", pVSBlob.GetAddressOf());
+        hr = compileShaderFromFile(L"../Library/Shaders/Assignment01.fxh", "VS", "vs_5_0", pVSBlob.GetAddressOf());
         if (FAILED(hr))
         {
             MessageBox(nullptr,
@@ -243,7 +264,7 @@ namespace library
 
         // Compile the pixel shader
         ComPtr<ID3DBlob>           pPSBlob(nullptr);
-        hr = compileShaderFromFile(L"../Library/Shaders/Lab03.fxh", "PS", "ps_5_0", pPSBlob.GetAddressOf());
+        hr = compileShaderFromFile(L"../Library/Shaders/Assignment01.fxh", "PS", "ps_5_0", pPSBlob.GetAddressOf());
         if (FAILED(hr))
         {
             MessageBox(nullptr,
@@ -259,14 +280,19 @@ namespace library
         // Create vertex buffer
         SimpleVertex vertices[] =
         {
-            { XMFLOAT3(0.0f, 0.5f, 0.5f) },
-            { XMFLOAT3(0.5f, -0.5f, 0.5f) },
-            { XMFLOAT3(-0.5f, -0.5f, 0.5f) },
+            { XMFLOAT3(-1.0f, 1.0f, -1.0f) },
+            { XMFLOAT3(1.0f, 1.0f, -1.0f) },
+            { XMFLOAT3(1.0f, 1.0f, 1.0f) },
+            { XMFLOAT3(-1.0f, 1.0f, 1.0f) },
+            { XMFLOAT3(-1.0f, -1.0f, -1.0f) },
+            { XMFLOAT3(1.0f, -1.0f, -1.0f) },
+            { XMFLOAT3(1.0f, -1.0f, 1.0f) },
+            { XMFLOAT3(-1.0f, -1.0f, 1.0f) },
         };
 
         D3D11_BUFFER_DESC bd =
         {
-            .ByteWidth = sizeof(SimpleVertex) * 3,
+            .ByteWidth = sizeof(SimpleVertex) * 8,
             .Usage = D3D11_USAGE_DEFAULT,
             .BindFlags = D3D11_BIND_VERTEX_BUFFER,
             .CPUAccessFlags = 0
@@ -286,8 +312,58 @@ namespace library
         UINT offset = 0;
         m_immediateContext->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
 
+        // Create index buffer
+        WORD indices[] =
+        {
+            3,1,0,
+            2,1,3,
+
+            0,5,4,
+            1,5,0,
+
+            3,4,7,
+            0,4,3,
+
+            1,6,5,
+            2,6,1,
+
+            2,7,6,
+            3,7,2,
+
+            6,4,5,
+            7,4,6,
+        };
+
+        bd.Usage = D3D11_USAGE_DEFAULT;
+        bd.ByteWidth = sizeof(WORD) * 36;        // 36 vertices needed for 12 triangles in a triangle list
+        bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+        bd.CPUAccessFlags = 0;
+        InitData.pSysMem = indices;
+
+        hr = m_d3dDevice->CreateBuffer(&bd, &InitData, m_indexBuffer.GetAddressOf());
+        if (FAILED(hr))
+            return hr;
+
+        // Set index buffer
+        m_immediateContext->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+
         // Set primitive topology
         m_immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+        bd.Usage = D3D11_USAGE_DEFAULT;
+        bd.ByteWidth = sizeof(ConstantBuffer);
+        bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bd.CPUAccessFlags = 0;
+
+        hr = m_d3dDevice->CreateBuffer(&bd, nullptr, m_constantBuffer.GetAddressOf());
+        if (FAILED(hr))
+            return hr;
+
+        // Initialize the world matrix
+        m_World = XMMatrixIdentity();
+
+        // Initialize the projection matrix
+        m_Projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, width / (FLOAT)height, 0.01f, 100.0f);
 
         return S_OK;
     }
@@ -303,10 +379,18 @@ namespace library
         // Clear the backbuffer
         m_immediateContext->ClearRenderTargetView(m_renderTargetView.Get(), Colors::MidnightBlue);
 
+        // Update variables
+        ConstantBuffer cb;
+        cb.World = XMMatrixTranspose(m_World);
+        cb.View = XMMatrixTranspose(m_camera.GetView());
+        cb.Projection = XMMatrixTranspose(m_Projection);
+        m_immediateContext->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &cb, 0, 0);
+
         // Render a triangle
         m_immediateContext->VSSetShader(m_vertexShader.Get(), nullptr, 0);
+        m_immediateContext->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
         m_immediateContext->PSSetShader(m_pixelShader.Get(), nullptr, 0);
-        m_immediateContext->Draw(3, 0);
+        m_immediateContext->DrawIndexed(36, 0, 0);
 
         // Present the information rendered to the back buffer to the front buffer (the screen)
         m_swapChain->Present(0, 0);
@@ -339,7 +423,7 @@ namespace library
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
 
     HRESULT Renderer::compileShaderFromFile(_In_ PCWSTR pszFileName, _In_ PCSTR pszEntryPoint, _In_ PCSTR szShaderModel, _Outptr_ ID3DBlob** ppBlobOut)
-     {
+    {
         HRESULT hr = S_OK;
 
         DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
@@ -367,5 +451,32 @@ namespace library
         }
 
         return S_OK;
-     }
+    }
+
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   Renderer::HandleInput
+
+      Summary:  Give HandleInput to camera object  
+
+      Args:     const DirectionsInput& directions
+                  Keyboard directional input
+                const MouseRelativeMovement& mouseRelativeMovement
+                  Mouse relative movement input
+                FLOAT deltaTime
+                  Time difference of a frame
+
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+
+    void Renderer::HandleInput(
+        _In_ const DirectionsInput& directions,
+        _In_ const MouseRelativeMovement& mouseRelativeMovement,
+        _In_ FLOAT deltaTime
+    )
+    {
+        m_camera.HandleInput(
+            directions,
+            mouseRelativeMovement,
+            deltaTime
+        );
+    }
 }

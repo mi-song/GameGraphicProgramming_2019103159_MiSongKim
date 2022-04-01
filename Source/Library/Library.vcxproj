@@ -111,8 +111,10 @@ copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Release"</Command>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Game\Game.h" />
+    <ClInclude Include="Renderer\DataTypes.h" />
     <ClInclude Include="Renderer\Renderer.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Window\BaseWindow.h" />
@@ -122,16 +124,17 @@ copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Release"</Command>
     <Image Include="directx.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Window\MainWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\Lab03.fxh" />
+    <None Include="Shaders\Assignment01.fxh" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\Lab03_PS.hlsl" />
-    <FxCompile Include="Shaders\Lab03_VS.hlsl" />
+    <FxCompile Include="Shaders\Assignment01_PS.hlsl" />
+    <FxCompile Include="Shaders\Assignment01_VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

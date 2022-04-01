@@ -62,6 +62,12 @@ namespace library
 
 	INT Game::Run()
 	{
+		INT64 counts_per_sec = 0;
+		QueryPerformanceFrequency((LARGE_INTEGER*)&counts_per_sec);
+		float sec_per_count = 1.0f / (float)counts_per_sec;
+		INT64 prev_time = 0;
+		QueryPerformanceCounter((LARGE_INTEGER*)&prev_time);
+
 		MSG msg = { 0 };
 		while (WM_QUIT != msg.message)
 		{
@@ -72,6 +78,16 @@ namespace library
 			}
 			else
 			{
+				INT64 current_time = 0;
+				QueryPerformanceCounter((LARGE_INTEGER*)&current_time);
+				float deltaTime = (current_time - prev_time) * sec_per_count;
+
+				m_renderer->HandleInput(
+					m_mainWindow->GetDirections(),
+					m_mainWindow->GetMouseRelativeMovement(),
+					deltaTime
+					);
+				m_mainWindow->ResetMouseMovement(); 
 				m_renderer->Render();
 			}
 		}
@@ -91,5 +107,33 @@ namespace library
 	PCWSTR Game::GetGameName() const
 	{
 		return m_pszGameName;
+	}
+
+	/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+	  Method:   Game::GetWindow
+
+	  Summary:  Returns the main window
+
+	  Returns:  std::unique_ptr<MainWindow>&
+				  The main window
+	M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+
+	std::unique_ptr<MainWindow>& Game::GetWindow()
+	{
+		return m_mainWindow;
+	}
+
+	/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+	  Method:   Game::GetRenderer
+
+	  Summary:  Returns the renderer
+
+	  Returns:  std::unique_ptr<Renderer>&
+				  The renderer
+	M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+
+	std::unique_ptr<Renderer>& Game::GetRenderer()
+	{
+		return m_renderer;
 	}
 }

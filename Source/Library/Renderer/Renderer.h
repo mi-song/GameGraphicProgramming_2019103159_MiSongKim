@@ -16,20 +16,10 @@
 #include <vector>
 
 #include "Window/MainWindow.h"
+#include "Camera/Camera.h"
 
 namespace library
 {
-    /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
-      Struct:    SimpleVertex
-
-      Summary:  Simple vertex structure containing a single field of the
-                type XMFLOAT3
-    C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-    struct SimpleVertex
-    {
-        XMFLOAT3 Postion;
-    };
-
     /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
       Class:    Renderer
 
@@ -57,6 +47,8 @@ namespace library
 
         HRESULT Initialize(_In_ HWND hWnd);
         void Render();
+        virtual void HandleInput(_In_ const DirectionsInput& directions, _In_ const MouseRelativeMovement& mouseRelativeMovement, _In_ FLOAT deltaTime);
+        Camera m_camera = Camera(XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f));
 
     private:
         HRESULT compileShaderFromFile(_In_ PCWSTR pszFileName, _In_ PCSTR pszEntryPoint, _In_ PCSTR szShaderModel, _Outptr_ ID3DBlob** ppBlobOut);
@@ -74,5 +66,10 @@ namespace library
         ComPtr<ID3D11PixelShader> m_pixelShader;
         ComPtr<ID3D11InputLayout> m_vertexLayout;
         ComPtr<ID3D11Buffer> m_vertexBuffer;
+        ComPtr<ID3D11Buffer> m_indexBuffer;
+        ComPtr<ID3D11Buffer> m_constantBuffer;
+        XMMATRIX m_World;
+        XMMATRIX m_View;
+        XMMATRIX m_Projection;
     };
 }

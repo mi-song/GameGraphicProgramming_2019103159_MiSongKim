@@ -10,7 +10,8 @@ namespace library
       Modifies: [m_driverType, m_featureLevel, m_d3dDevice, m_d3dDevice1,
                   m_immediateContext, m_immediateContext1, m_swapChain,
                   m_swapChain1, m_renderTargetView, m_vertexShader,
-                  m_pixelShader, m_vertexLayout, m_vertexBuffer].
+                  m_depthStencil, m_depthStencilView, m_camera, 
+                  m_renderables, m_vertexShaders, m_pixelShaders].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
 
     Renderer::Renderer()
@@ -26,7 +27,6 @@ namespace library
         , m_depthStencil(nullptr)
         , m_depthStencilView(nullptr)
         , m_camera(Camera(XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f)))
-        , m_projection()
         , m_renderables(std::unordered_map<PCWSTR, std::shared_ptr<Renderable>>())
         , m_vertexShaders(std::unordered_map<PCWSTR, std::shared_ptr<VertexShader>>())
         , m_pixelShaders(std::unordered_map<PCWSTR, std::shared_ptr<PixelShader>>())

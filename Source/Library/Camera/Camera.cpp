@@ -110,10 +110,11 @@ namespace library
 
         m_yaw += static_cast<float>(mouseRelativeMovement.X) * m_rotationSpeed;
         m_pitch += static_cast<float>(mouseRelativeMovement.Y) * m_rotationSpeed;
-        if (m_pitch < -XM_PI /2.0)
-            m_pitch = -XM_PI /2.0;
-        else if (m_pitch > XM_PI /2.0)
-            m_pitch = XM_PI /2.0;
+
+        if (m_pitch < -XM_PIDIV2)
+            m_pitch = XM_PIDIV2;
+        else if (m_pitch > XM_PIDIV2)
+            m_pitch = XM_PIDIV2;
 
         if (directions.bLeft) // A
         {

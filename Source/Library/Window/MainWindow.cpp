@@ -68,12 +68,13 @@ namespace library
         PAINTSTRUCT ps;
         HDC hdc;
 
-        RAWINPUTDEVICE Rid[1];
-        Rid[0].usUsagePage = 0x01;
-        Rid[0].usUsage = 0x02;
-        Rid[0].dwFlags = RIDEV_INPUTSINK;
-        Rid[0].hwndTarget = m_hWnd;
-        RegisterRawInputDevices(Rid, 1, sizeof(Rid[0]));
+        // Mouse raw input
+        RAWINPUTDEVICE rawInput[1];
+        rawInput[0].usUsagePage = 0x01;
+        rawInput[0].usUsage = 0x02;
+        rawInput[0].dwFlags = RIDEV_INPUTSINK;
+        rawInput[0].hwndTarget = m_hWnd;
+        RegisterRawInputDevices(rawInput, 1, sizeof(rawInput[0]));
 
         switch (uMsg)
         {
@@ -151,7 +152,6 @@ namespace library
         default:
             return DefWindowProc(m_hWnd, uMsg, wParam, lParam);
         }
-
         return 0;
     }
 

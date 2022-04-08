@@ -20,7 +20,7 @@ namespace library
         , m_moveBackForward(0.0f)
         , m_moveUpDown(0.0f)
         , m_travelSpeed(0.001f)
-        , m_rotationSpeed(0.01f)
+        , m_rotationSpeed(0.001f)
         , m_padding()
         , m_cameraForward(DEFAULT_FORWARD)
         , m_cameraRight(DEFAULT_RIGHT)

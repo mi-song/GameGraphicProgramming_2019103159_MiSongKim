@@ -68,26 +68,11 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
-    std::shared_ptr<MiniCube> miniCube = std::make_shared<MiniCube>();
-    if (FAILED(game->GetRenderer()->AddRenderable(L"MiniCube", miniCube)))
-    {
-        return 0;
-    }
-
     if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"MainCube", L"MainShader")))
     {
         return 0; 
     }
     if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"MainCube", L"MainShader")))
-    {
-        return 0;
-    }
-
-    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"MiniCube", L"MainShader")))
-    {
-        return 0;
-    }
-    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"MiniCube", L"MainShader")))
     {
         return 0;
     }

@@ -18,6 +18,7 @@
 
 namespace library
 {
+
     /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
       Class:    Game
 

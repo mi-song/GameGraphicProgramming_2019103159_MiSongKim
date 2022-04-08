@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Source Files\Game">
       <UniqueIdentifier>{9db87b4d-37f6-4c7d-8c86-ba5c6ad15862}</UniqueIdentifier>
     </Filter>
@@ -21,9 +17,6 @@
     </Filter>
     <Filter Include="Source Files\Window">
       <UniqueIdentifier>{de4a384a-4f80-4ce0-84ab-a6fe7e80c610}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{f7ac22ca-84bc-4bd2-92da-877edb024ca0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Game">
       <UniqueIdentifier>{bfd78954-7870-48b6-af75-00e3b707b45e}</UniqueIdentifier>
@@ -34,11 +27,18 @@
     <Filter Include="Header Files\Renderer">
       <UniqueIdentifier>{6bcd4ba9-c09b-4c1f-b188-4e644b091113}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Camera">
-      <UniqueIdentifier>{de7fd016-2aa0-4ec1-9868-5237be1d7447}</UniqueIdentifier>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{bf1707fa-2446-4a22-b8f7-8d8966af32ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Camera">
-      <UniqueIdentifier>{1cdcdaf4-2561-4b8b-8e69-b57efef6d87f}</UniqueIdentifier>
+    <Filter Include="Source Files\Shader">
+      <UniqueIdentifier>{7462f014-0d58-4342-9bc9-833f266a2e82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shader">
+      <UniqueIdentifier>{6f98ddc8-52ca-455b-b65a-d43687a59a8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -46,7 +46,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>Resource Files</Filter>
+      <Filter>Source Files\Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Game.h">
       <Filter>Header Files\Game</Filter>
@@ -60,11 +60,20 @@
     <ClInclude Include="Renderer\Renderer.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Camera\Camera.h">
-      <Filter>Header Files\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer\DataTypes.h">
       <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Renderable.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader\PixelShader.h">
+      <Filter>Header Files\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader\Shader.h">
+      <Filter>Header Files\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader\VertexShader.h">
+      <Filter>Header Files\Shader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -76,32 +85,28 @@
     <ClCompile Include="Game\Game.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\Renderer.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Window\MainWindow.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
-    <ClCompile Include="Camera\Camera.cpp">
-      <Filter>Source Files\Camera</Filter>
+    <ClCompile Include="Renderer\Renderable.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader\PixelShader.cpp">
+      <Filter>Source Files\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader\Shader.cpp">
+      <Filter>Source Files\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader\VertexShader.cpp">
+      <Filter>Source Files\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Renderer.cpp">
+      <Filter>Source Files\Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\Assignment01.fxh">
-      <Filter>Shaders</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Shaders\Assignment01_PS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Shaders\Assignment01_VS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="Resource.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>Source Files\Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
 </Project>

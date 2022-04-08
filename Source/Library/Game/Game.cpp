@@ -1,4 +1,4 @@
-#include "Game/Game.h"
+﻿#include "Game/Game.h"
 
 namespace library
 {
@@ -62,12 +62,14 @@ namespace library
 
 	INT Game::Run()
 	{
-		INT64 counts_per_sec = 0;
-		QueryPerformanceFrequency((LARGE_INTEGER*)&counts_per_sec);
-		float sec_per_count = 1.0f / (float)counts_per_sec;
-		INT64 prev_time = 0;
-		QueryPerformanceCounter((LARGE_INTEGER*)&prev_time);
+		LARGE_INTEGER StartingTime, EndingTime;
+		LARGE_INTEGER Frequency;
+		FLOAT ElapsedTime;
 
+		QueryPerformanceFrequency(&Frequency);
+		QueryPerformanceCounter(&StartingTime);
+
+		// Main message loop
 		MSG msg = { 0 };
 		while (WM_QUIT != msg.message)
 		{
@@ -78,16 +80,10 @@ namespace library
 			}
 			else
 			{
-				INT64 current_time = 0;
-				QueryPerformanceCounter((LARGE_INTEGER*)&current_time);
-				float deltaTime = (current_time - prev_time) * sec_per_count;
-
-				m_renderer->HandleInput(
-					m_mainWindow->GetDirections(),
-					m_mainWindow->GetMouseRelativeMovement(),
-					deltaTime
-					);
-				m_mainWindow->ResetMouseMovement(); 
+				QueryPerformanceCounter(&EndingTime);
+				ElapsedTime = static_cast<FLOAT>(EndingTime.QuadPart - StartingTime.QuadPart);
+				ElapsedTime /= static_cast<FLOAT>(Frequency.QuadPart);
+				m_renderer->Update(ElapsedTime);
 				m_renderer->Render();
 			}
 		}

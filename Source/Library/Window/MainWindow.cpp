@@ -1,4 +1,4 @@
-#include "Window/MainWindow.h"
+﻿#include "Window/MainWindow.h"
 
 namespace library
 {
@@ -68,77 +68,8 @@ namespace library
         PAINTSTRUCT ps;
         HDC hdc;
 
-        RAWINPUTDEVICE Rid[1];
-        Rid[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
-        Rid[0].usUsage = HID_USAGE_GENERIC_MOUSE;
-        Rid[0].dwFlags = RIDEV_INPUTSINK;
-        Rid[0].hwndTarget = m_hWnd;
-        RegisterRawInputDevices(Rid, 1, sizeof(Rid[0]));
-
         switch (uMsg)
         {
-        case WM_INPUT:
-        {
-            UINT dwSize = sizeof(RAWINPUT);
-            static BYTE lpb[sizeof(RAWINPUT)];
-
-            GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER));
-
-            RAWINPUT* raw = (RAWINPUT*)lpb;
-
-            if (raw->header.dwType == RIM_TYPEMOUSE)
-            {
-                m_mouseRelativeMovement.X = raw->data.mouse.lLastX;
-                m_mouseRelativeMovement.Y = raw->data.mouse.lLastY;
-            }
-            break;
-        }
-            
-        case WM_KEYDOWN:
-            switch (wParam) {
-            case 0x57: // W
-                m_directions.bFront = true;
-                break;
-            case 0x41: // A
-                m_directions.bLeft = true; 
-                break;
-            case 0x53: // S
-                m_directions.bBack = true;
-                break;
-            case 0x44: // D 
-                m_directions.bRight = true; 
-                break;
-            case VK_SPACE:
-                m_directions.bUp = true;
-                break;
-            case VK_SHIFT:
-                m_directions.bDown = true;
-                break;
-            }
-            break;
-
-        case WM_KEYUP:
-            switch (wParam) {
-            case 0x57:
-                m_directions.bFront = false;
-                break;
-            case 0x41:
-                m_directions.bLeft = false;
-                break;
-            case 0x53:
-                m_directions.bBack = false;
-                break;
-            case 0x44:
-                m_directions.bRight = false; 
-                break;
-            case VK_SPACE:
-                m_directions.bUp = false;
-                break;
-            case VK_SHIFT:
-                m_directions.bDown = false;
-                break;
-            }
-
         case WM_PAINT:
             hdc = BeginPaint(m_hWnd, &ps);
             EndPaint(m_hWnd, &ps);
@@ -148,49 +79,13 @@ namespace library
             PostQuitMessage(0);
             break;
 
+            // Note that this tutorial does not handle resizing (WM_SIZE) requests,
+            // so we created the window without the resize border.
+
         default:
             return DefWindowProc(m_hWnd, uMsg, wParam, lParam);
         }
 
         return 0;
-    }
-
-    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
-      Method:   MainWindow::GetDirections
-
-      Summary:  Returns the keyboard direction input
-
-      Returns:  const DirectionsInput&
-                  Keyboard direction input
-    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-
-    const DirectionsInput& MainWindow::GetDirections() const
-    {
-        return m_directions;
-    }
-
-    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
-      Method:   MainWindow::GetMouseRelativeMovement
-
-      Summary:  Returns the mouse relative movement
-
-      Returns:  const MouseRelativeMovement&
-                  Mouse relative movement
-    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-
-    const MouseRelativeMovement& MainWindow::GetMouseRelativeMovement() const
-    {
-        return m_mouseRelativeMovement;
-    }
-
-    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
-      Method:   MainWindow::ResetMouseMovement
-
-      Summary:  Reset the mouse relative movement to zero
-    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-
-    void MainWindow::ResetMouseMovement()
-    {
-        m_mouseRelativeMovement = { 0, };
     }
 }

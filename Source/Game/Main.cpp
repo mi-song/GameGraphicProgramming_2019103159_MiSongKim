@@ -48,7 +48,7 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    std::unique_ptr<library::Game> game = std::make_unique<library::Game>(L"Game Graphics Programming Assignment 01: Flying Camera");
+    std::unique_ptr<library::Game> game = std::make_unique<library::Game>(L"Game Graphics Programming Lab 04: 3D Spaces and Transformations");
 
     std::shared_ptr<library::VertexShader> vertexShader = std::make_shared<library::VertexShader>(L"Shaders/Shaders.fxh", "VS", "vs_5_0");
     if (FAILED(game->GetRenderer()->AddVertexShader(L"MainShader", vertexShader)))
@@ -68,11 +68,26 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
+    std::shared_ptr<MiniCube> miniCube = std::make_shared<MiniCube>();
+    if (FAILED(game->GetRenderer()->AddRenderable(L"MiniCube", miniCube)))
+    {
+        return 0;
+    }
+
     if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"MainCube", L"MainShader")))
     {
         return 0; 
     }
     if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"MainCube", L"MainShader")))
+    {
+        return 0;
+    }
+
+    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"MiniCube", L"MainShader")))
+    {
+        return 0;
+    }
+    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"MiniCube", L"MainShader")))
     {
         return 0;
     }

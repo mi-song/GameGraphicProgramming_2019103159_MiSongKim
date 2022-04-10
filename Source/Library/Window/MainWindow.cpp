@@ -95,6 +95,7 @@ namespace library
             break;
         }
 
+        // keyboard input 
         case WM_KEYDOWN:
             switch (wParam) {
             case 0x57: // W

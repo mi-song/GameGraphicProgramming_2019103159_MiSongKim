@@ -21,14 +21,14 @@ namespace library
         , m_moveUpDown(0.0f)
         , m_travelSpeed(0.001f)
         , m_rotationSpeed(0.001f)
-        , m_padding()
+        , m_padding(0)
         , m_cameraForward(DEFAULT_FORWARD)
         , m_cameraRight(DEFAULT_RIGHT)
         , m_cameraUp(DEFAULT_UP)
         , m_eye(XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f))
         , m_at(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
         , m_up(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
-        , m_rotation()
+        , m_rotation(XMMatrixIdentity())
         , m_view(XMMatrixLookAtLH(m_eye, m_at, m_up))
     { }
 
@@ -108,13 +108,12 @@ namespace library
     {
         float speed = m_travelSpeed * deltaTime;
 
+        if ((m_pitch + static_cast<float>(mouseRelativeMovement.Y) * m_rotationSpeed) >= -XM_PIDIV2
+            && (m_pitch + static_cast<float>(mouseRelativeMovement.Y) * m_rotationSpeed) <= XM_PIDIV2)
+        {
+            m_pitch += static_cast<float>(mouseRelativeMovement.Y) * m_rotationSpeed;
+        }
         m_yaw += static_cast<float>(mouseRelativeMovement.X) * m_rotationSpeed;
-        m_pitch += static_cast<float>(mouseRelativeMovement.Y) * m_rotationSpeed;
-
-        if (m_pitch < -XM_PIDIV2)
-            m_pitch = XM_PIDIV2;
-        else if (m_pitch > XM_PIDIV2)
-            m_pitch = XM_PIDIV2;
 
         if (directions.bLeft) // A
         {
@@ -166,12 +165,12 @@ namespace library
         m_at = XMVector3Normalize(m_at);
 
         // new right / up / forward 
-        XMMATRIX RotateYTempMatrix;
-        RotateYTempMatrix = XMMatrixRotationY(m_yaw);
+        XMMATRIX rotateYTempMatrix;
+        rotateYTempMatrix = XMMatrixRotationY(m_yaw);
 
-        m_cameraRight = XMVector3TransformCoord(DEFAULT_RIGHT, RotateYTempMatrix);
-        m_cameraUp = XMVector3TransformCoord(m_cameraUp, RotateYTempMatrix);
-        m_cameraForward = XMVector3TransformCoord(DEFAULT_FORWARD, RotateYTempMatrix);
+        m_cameraRight = XMVector3TransformCoord(DEFAULT_RIGHT, rotateYTempMatrix);
+        m_cameraUp = XMVector3TransformCoord(m_cameraUp, rotateYTempMatrix);
+        m_cameraForward = XMVector3TransformCoord(DEFAULT_FORWARD, rotateYTempMatrix);
 
         // new eye
         m_eye += m_moveLeftRight * m_cameraRight;

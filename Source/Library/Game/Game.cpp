@@ -89,9 +89,8 @@ namespace library
 					m_mainWindow->GetMouseRelativeMovement(),
 					ElapsedTime
 				);
-
-				// m_renderer->Update(ElapsedTime);
 				m_mainWindow->ResetMouseMovement();
+				m_renderer->Update(ElapsedTime);
 				m_renderer->Render();
 			}
 		}

@@ -12,6 +12,9 @@
   TODO: Declare a diffuse texture and a sampler state (remove the comment)
 --------------------------------------------------------------------*/
 
+Texture2D txDiffuse : register(t0);
+SamplerState samLinear : register(s0);
+
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
@@ -24,6 +27,11 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
   TODO: cbChangeOnCameraMovement definition (remove the comment)
 --------------------------------------------------------------------*/
 
+cbuffer cbChangeOnCameraMovement : register(b0)
+{
+    matrix View;
+};
+
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Cbuffer:  cbChangeOnResize
 
@@ -33,6 +41,11 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
   TODO: cbChangeOnResize definition (remove the comment)
 --------------------------------------------------------------------*/
 
+cbuffer cbChangeOnResize : register(b1)
+{
+    matrix Projection;
+};
+
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Cbuffer:  cbChangesEveryFrame
 
@@ -41,6 +54,12 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 /*--------------------------------------------------------------------
   TODO: cbChangesEveryFrame definition (remove the comment)
 --------------------------------------------------------------------*/
+
+cbuffer cbChangesEveryFrame : register(b2)
+{
+    matrix World;
+    float4 vMeshColor;
+};
 
 //--------------------------------------------------------------------------------------
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -54,7 +73,8 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 
 struct VS_INPUT
 {
-	float4 Pos : POSITION;
+    float4 Pos : POSITION;
+    float2 Tex : TEXCOORD0;
 };
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -69,7 +89,8 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 
 struct PS_INPUT
 {
-	float4 Pos : SV_POSITION;
+    float4 Pos : SV_POSITION;
+    float2 Tex : TEXCOORD0;
 };
 
 //--------------------------------------------------------------------------------------
@@ -85,6 +106,7 @@ PS_INPUT VS(VS_INPUT input)
     output.Pos = mul(input.Pos, World);
     output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
+    output.Tex = input.Tex;
 
     return output;
 }
@@ -98,5 +120,5 @@ PS_INPUT VS(VS_INPUT input)
 
 float4 PS(PS_INPUT input) : SV_Target
 {
-    return float4(1.0f, 0.0f, 0.0f, 1.0f);
+    return txDiffuse.Sample(samLinear, input.Tex) * vMeshColor;
 }

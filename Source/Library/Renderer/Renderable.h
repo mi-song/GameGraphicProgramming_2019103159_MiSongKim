@@ -1,9 +1,12 @@
 ﻿/*+===================================================================
   File:      RENDERABLE.H
+
   Summary:   Renderable header file contains declarations of
              Renderable class used for the lab samples of Game
              Graphics Programming course.
+
   Classes: Renderable
+
   � 2022 Kyung Hee University
 ===================================================================+*/
 #pragma once
@@ -18,7 +21,9 @@ namespace library
 {
     /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
         Class:    Renderable
+
         Summary:  Base class for all renderable classes
+
         Methods:  Initialize
                     Pure virtual function that initializes the object
                   Update
@@ -50,7 +55,7 @@ namespace library
     class Renderable
     {
     public:
-        Renderable();
+        Renderable(_In_ const std::filesystem::path& textureFilePath);
         Renderable(const Renderable& other) = delete;
         Renderable(Renderable&& other) = delete;
         Renderable& operator=(const Renderable& other) = delete;

@@ -12,6 +12,10 @@ M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
   TODO: BaseCube::BaseCube definition (remove the comment)
 --------------------------------------------------------------------*/
 
+BaseCube::BaseCube(const std::filesystem::path& textureFilePath)
+    : Renderable::Renderable(textureFilePath)
+{ }
+
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
   Method:   BaseCube::Initialize
 
@@ -31,16 +35,16 @@ HRESULT BaseCube::Initialize(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContex
     HRESULT hr = S_OK;
     hr = initialize(pDevice, pImmediateContext);
     if (FAILED(hr))
-        return hr; 
+        return hr;
 
-    return S_OK; 
+    return S_OK;
 }
 
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
   Method:   BaseCube::GetNumVertices
 
   Summary:  Returns the number of vertices in the cube
-  
+
   Returns:  UINT
               Number of vertices
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
@@ -54,35 +58,35 @@ UINT BaseCube::GetNumVertices() const
   Method:   BaseCube::GetNumIndices
 
   Summary:  Returns the number of indices in the cube
-  
+
   Returns:  UINT
               Number of indices
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
 
 UINT BaseCube::GetNumIndices() const
 {
-    return NUM_INDICES; 
+    return NUM_INDICES;
 }
 
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
   Method:   BaseCube::getVertices
 
   Summary:  Returns the pointer to the vertices data
-  
+
   Returns:  const library::SimpleVertex*
               Pointer to the vertices data
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
 
 const library::SimpleVertex* BaseCube::getVertices() const
 {
-    return VERTICES; 
+    return VERTICES;
 }
 
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
   Method:   BaseCube::getIndices
 
   Summary:  Returns the pointer to the indices data
-  
+
   Returns:  const WORD*
               Pointer to the indices data
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/

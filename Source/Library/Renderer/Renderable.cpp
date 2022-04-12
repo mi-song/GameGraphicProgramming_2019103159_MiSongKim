@@ -3,21 +3,40 @@
 namespace library
 {
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   Renderable::Renderable
+
+      Summary:  Constructor
+
+      Args:     const std::filesystem::path& textureFilePath
+                  Path to the texture to use
+
+      Modifies: [m_vertexBuffer, m_indexBuffer, m_constantBuffer,
+                 m_textureRV, m_samplerLinear, m_vertexShader,
+                 m_pixelShader, m_textureFilePath, m_world].
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderable::Renderable definition (remove the comment)
+    --------------------------------------------------------------------*/
+
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::initialize
 
-      Summary:  Initializes the buffers and the world matrix
+      Summary:  Initializes the buffers, texture, and the world matrix
 
       Args:     ID3D11Device* pDevice
                   The Direct3D device to create the buffers
                 ID3D11DeviceContext* pImmediateContext
                   The Direct3D context to set buffers
 
-      Modifies: [m_vertexBuffer, m_indexBuffer, m_constantBuffer, 
-                  m_world].
+      Modifies: [m_vertexBuffer, m_indexBuffer, m_constantBuffer,
+                 m_textureRV, m_samplerLinear, m_world].
 
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderable::initialize definition (remove the comment)
+    --------------------------------------------------------------------*/
 
     HRESULT Renderable::initialize(_In_ ID3D11Device*pDevice, _In_ ID3D11DeviceContext* )
     {
@@ -200,6 +219,30 @@ namespace library
     {
         return m_world;
     }
+
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   Renderable::GetTextureResourceView
+
+      Summary:  Returns the texture resource view
+
+      Returns:  ComPtr<ID3D11ShaderResourceView>&
+                  The texture resource view
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderable::GetTextureResourceView definition (remove the comment)
+    --------------------------------------------------------------------*/
+
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   Renderable::GetSamplerState
+
+      Summary:  Returns the sampler state
+
+      Returns:  ComPtr<ID3D11SamplerState>&
+                  The sampler state
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderable::GetSamplerState definition (remove the comment)
+    --------------------------------------------------------------------*/
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::RotateX

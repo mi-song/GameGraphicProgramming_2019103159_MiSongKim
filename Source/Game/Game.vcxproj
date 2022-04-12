@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -99,13 +99,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Cube\BaseCube.cpp" />
-    <ClCompile Include="Cube\MainCube.cpp" />
+    <ClCompile Include="Cube\Cube.cpp" />
     <ClCompile Include="Cube\MiniCube.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube\BaseCube.h" />
-    <ClInclude Include="Cube\MainCube.h" />
+    <ClInclude Include="Cube\Cube.h" />
     <ClInclude Include="Cube\MiniCube.h" />
   </ItemGroup>
   <ItemGroup>

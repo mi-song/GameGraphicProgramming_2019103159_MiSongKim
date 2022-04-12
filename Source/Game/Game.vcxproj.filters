@@ -33,7 +33,7 @@
     <ClCompile Include="Cube\MiniCube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
-    <ClCompile Include="Cube\MainCube.cpp">
+    <ClCompile Include="Cube\Cube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,7 +44,7 @@
     <ClInclude Include="Cube\MiniCube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
-    <ClInclude Include="Cube\MainCube.h">
+    <ClInclude Include="Cube\Cube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
   </ItemGroup>

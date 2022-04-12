@@ -21,7 +21,7 @@ namespace library
         , m_moveUpDown(0.0f)
         , m_travelSpeed(0.001f)
         , m_rotationSpeed(0.001f)
-        , m_padding(0)
+        , m_padding()
         , m_cameraForward(DEFAULT_FORWARD)
         , m_cameraRight(DEFAULT_RIGHT)
         , m_cameraUp(DEFAULT_UP)
@@ -142,6 +142,17 @@ namespace library
 
         Camera::Update(deltaTime);
     }
+
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   Camera::Initialize
+      Summary:  Initialize the view matrix constant buffers
+      Args:     ID3D11Device* pDevice
+                  Pointer to a Direct3D 11 device
+      Modifies: [m_cbChangeOnCameraMovement].
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Camera::Initialize definition (remove the comment)
+    --------------------------------------------------------------------*/
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Camera::Update

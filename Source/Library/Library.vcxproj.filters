@@ -46,6 +46,12 @@
     <Filter Include="Header Files\Camera">
       <UniqueIdentifier>{8b367f16-c01f-4d47-a8bf-de4fef74e346}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Texture">
+      <UniqueIdentifier>{b5b14c9a-de5c-425d-b656-634142d4caec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Texture">
+      <UniqueIdentifier>{4529dd24-6e41-4f51-a361-a895d48ff213}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h">
@@ -84,6 +90,9 @@
     <ClInclude Include="Camera\Camera.h">
       <Filter>Header Files\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="Texture\DDSTextureLoader.h">
+      <Filter>Header Files\Texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="directx.ico">
@@ -114,6 +123,9 @@
     </ClCompile>
     <ClCompile Include="Renderer\Renderer.cpp">
       <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture\DDSTextureLoader.cpp">
+      <Filter>Source Files\Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

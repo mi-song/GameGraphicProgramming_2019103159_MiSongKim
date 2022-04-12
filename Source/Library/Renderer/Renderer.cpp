@@ -4,15 +4,17 @@ namespace library
 {
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::Renderer
-
       Summary:  Constructor
-
       Modifies: [m_driverType, m_featureLevel, m_d3dDevice, m_d3dDevice1,
-                  m_immediateContext, m_immediateContext1, m_swapChain,
-                  m_swapChain1, m_renderTargetView, m_vertexShader,
-                  m_depthStencil, m_depthStencilView, m_camera, m_projection,
-                  m_renderables, m_vertexShaders, m_pixelShaders].
+                 m_immediateContext, m_immediateContext1, m_swapChain,
+                 m_swapChain1, m_renderTargetView, m_depthStencil,
+                 m_depthStencilView, m_cbChangeOnResize, m_camera,
+                 m_projection, m_renderables, m_vertexShaders,
+                 m_pixelShaders].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::Renderer definition (remove the comment)
+    --------------------------------------------------------------------*/
 
     Renderer::Renderer()
         : m_driverType(D3D_DRIVER_TYPE_NULL)
@@ -35,20 +37,20 @@ namespace library
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::Initialize
-
       Summary:  Creates Direct3D device and swap chain
-
       Args:     HWND hWnd
                   Handle to the window
-
       Modifies: [m_d3dDevice, m_featureLevel, m_immediateContext,
-                  m_d3dDevice1, m_immediateContext1, m_swapChain1,
-                  m_swapChain, m_renderTargetView, m_vertexShader,
-                  m_vertexLayout, m_pixelShader, m_vertexBuffer].
-
+                 m_d3dDevice1, m_immediateContext1, m_swapChain1,
+                 m_swapChain, m_renderTargetView, m_cbChangeOnResize,
+                 m_projection, m_camera, m_vertexShaders,
+                 m_pixelShaders, m_renderables].
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::Initialize definition (remove the comment)
+    --------------------------------------------------------------------*/
 
     HRESULT Renderer::Initialize(_In_ HWND hWnd)
     {
@@ -300,6 +302,9 @@ namespace library
       Returns:  HRESULT
                   Status code.
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::AddRenderable definition (remove the comment)
+    --------------------------------------------------------------------*/
 
     HRESULT Renderer::AddRenderable(_In_ PCWSTR pszRenderableName, _In_ const std::shared_ptr<Renderable>& renderable)
     {
@@ -374,11 +379,14 @@ namespace library
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::HandleInput
+
       Summary:  Add the pixel shader into the renderer and initialize it
+
       Args:     const DirectionsInput& directions
                   Data structure containing keyboard input data
                 const MouseRelativeMovement& mouseRelativeMovement
                   Data structure containing mouse relative input data
+
       Modifies: [m_camera].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     /*--------------------------------------------------------------------

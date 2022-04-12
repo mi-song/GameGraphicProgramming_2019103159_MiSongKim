@@ -43,6 +43,7 @@
 #include <vector>
 
 #include "Resource.h"
+#include "Texture/DDSTextureLoader.h"
 
 constexpr LPCWSTR PSZ_COURSE_TITLE = L"Game Graphics Programming";
 

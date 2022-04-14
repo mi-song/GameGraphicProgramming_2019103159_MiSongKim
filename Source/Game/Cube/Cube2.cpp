@@ -1,4 +1,4 @@
-﻿#include "Cube/EarthCube.h"
+﻿#include "Cube/Cube2.h"
 
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
   Method:   Cube::Cube
@@ -12,7 +12,7 @@ M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
   TODO: Cube::Cube definition (remove the comment)
 --------------------------------------------------------------------*/
 
-EarthCube::EarthCube(const std::filesystem::path& textureFilePath)
+Cube2::Cube2(const std::filesystem::path& textureFilePath)
     : BaseCube::BaseCube(textureFilePath)
 { }
 
@@ -26,11 +26,12 @@ EarthCube::EarthCube(const std::filesystem::path& textureFilePath)
 
   Modifies: [m_world].
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-void EarthCube::Update(_In_ FLOAT deltaTime)
+void Cube2::Update(_In_ FLOAT deltaTime)
 {
-    XMMATRIX mScale = XMMatrixScaling(0.5f, 0.5f, 0.5f);
-    XMMATRIX mTranslate = XMMatrixTranslation(-4.0f, 0.0f, 0.0f);
+    XMMATRIX mSpin = XMMatrixRotationZ(-deltaTime);
     XMMATRIX mOrbit = XMMatrixRotationY(-deltaTime * 2.0f);
+    XMMATRIX mTranslate = XMMatrixTranslation(-4.0f, 0.0f, 0.0f);
+    XMMATRIX mScale = XMMatrixScaling(0.3f, 0.3f, 0.3f);
 
-    m_world = mScale * mTranslate * mOrbit;
+    m_world = mScale * mSpin * mTranslate * mOrbit;
 }

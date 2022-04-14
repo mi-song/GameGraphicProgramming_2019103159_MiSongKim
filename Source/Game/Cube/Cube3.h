@@ -1,5 +1,5 @@
 ﻿/*+===================================================================
-  File:      EARTHCUBE.H
+  File:      CUBE3H
 
   Summary:   Cube header file contains declarations of Cube class
              used for the lab samples of Game Graphics Programming
@@ -27,15 +27,15 @@
             ~Cube
               Destructor.
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-class EarthCube : public BaseCube
+class Cube3 : public BaseCube
 {
 public:
-    EarthCube(const std::filesystem::path& textureFilePath);
-    EarthCube(const EarthCube& other) = delete;
-    EarthCube(EarthCube&& other) = delete;
-    EarthCube& operator=(const EarthCube& other) = delete;
-    EarthCube& operator=(EarthCube&& other) = delete;
-    ~EarthCube() = default;
+    Cube3(const std::filesystem::path& textureFilePath);
+    Cube3(const Cube3& other) = delete;
+    Cube3(Cube3&& other) = delete;
+    Cube3& operator=(const Cube3& other) = delete;
+    Cube3& operator=(Cube3&& other) = delete;
+    ~Cube3() = default;
 
     virtual void Update(_In_ FLOAT deltaTime) override;
 };

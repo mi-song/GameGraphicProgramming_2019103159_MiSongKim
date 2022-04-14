@@ -17,8 +17,8 @@
 #include <source_location>
 
 #include "Cube/Cube.h"
-#include "Cube/SunCube.h"
-#include "Cube/EarthCube.h"
+#include "Cube/Cube2.h"
+#include "Cube/Cube3.h"
 #include "Game/Game.h"
 
 /*F+F+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -50,7 +50,7 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    std::unique_ptr<library::Game> game = std::make_unique<library::Game>(L"Game Graphics Programming Lab 05: Texture Mapping and Constant Buffers");
+    std::unique_ptr<library::Game> game = std::make_unique<library::Game>(L"Game Graphics Programming Lab 04: 3D Spaces and Transformations");
 
     std::shared_ptr<library::VertexShader> vertexShader = std::make_shared<library::VertexShader>(L"Shaders/Shaders.fxh", "VS", "vs_5_0");
     if (FAILED(game->GetRenderer()->AddVertexShader(L"MainShader", vertexShader)))
@@ -70,14 +70,14 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
-    std::shared_ptr<SunCube> sunCube = std::make_shared<SunCube>("sun.dds");
-    if (FAILED(game->GetRenderer()->AddRenderable(L"SunCube", sunCube)))
+    std::shared_ptr<Cube2> cube2 = std::make_shared<Cube2>("seafloor.dds");
+    if (FAILED(game->GetRenderer()->AddRenderable(L"Cube2", cube2)))
     {
         return 0;
     }
 
-    std::shared_ptr<EarthCube> earthCube = std::make_shared<EarthCube>("earth.dds");
-    if (FAILED(game->GetRenderer()->AddRenderable(L"EarthCube", earthCube)))
+    std::shared_ptr<Cube3> cube3 = std::make_shared<Cube3>("seafloor.dds");
+    if (FAILED(game->GetRenderer()->AddRenderable(L"Cube3", cube3)))
     {
         return 0;
     }
@@ -92,22 +92,22 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
-    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"SunCube", L"MainShader")))
+    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"Cube2", L"MainShader")))
     {
         return 0;
     }
 
-    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"SunCube", L"MainShader")))
+    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"Cube2", L"MainShader")))
     {
         return 0;
     }
 
-    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"EarthCube", L"MainShader")))
+    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"Cube3", L"MainShader")))
     {
         return 0;
     }
 
-    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"EarthCube", L"MainShader")))
+    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"Cube3", L"MainShader")))
     {
         return 0;
     }

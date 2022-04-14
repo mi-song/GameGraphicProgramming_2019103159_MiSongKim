@@ -12,12 +12,10 @@ namespace library
                  m_padding, m_cameraForward, m_cameraRight, m_cameraUp,
                  m_eye, m_at, m_up, m_rotation, m_view].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Camera::Camera definition (remove the comment)
-    --------------------------------------------------------------------*/
 
     Camera::Camera(_In_ const XMVECTOR&)
-        : m_yaw(0.0f)
+        : m_cbChangeOnCameraMovement(nullptr)
+        , m_yaw(0.0f)
         , m_pitch(0.0f)
         , m_moveLeftRight(0.0f)
         , m_moveBackForward(0.0f)
@@ -99,6 +97,9 @@ namespace library
       Returns:  ComPtr<ID3D11Buffer>&
                   The constant buffer
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Camera::GetConstantBuffer definition (remove the comment)
+    --------------------------------------------------------------------*/
 
     ComPtr<ID3D11Buffer>& Camera::GetConstantBuffer()
     {
@@ -178,14 +179,15 @@ namespace library
     {
         HRESULT hr = S_OK;
 
-        D3D11_BUFFER_DESC bd = {};
-        // Create the constant buffers
-        bd.Usage = D3D11_USAGE_DEFAULT;
-        bd.ByteWidth = sizeof(CBChangeOnCameraMovement);
-        bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        bd.CPUAccessFlags = 0;
-        hr = device->CreateBuffer(&bd, nullptr, m_cbChangeOnCameraMovement.GetAddressOf());
+        D3D11_BUFFER_DESC bd =
+        {
+            .ByteWidth = sizeof(CBChangeOnCameraMovement),
+            .Usage = D3D11_USAGE_DEFAULT,
+            .BindFlags = D3D11_BIND_CONSTANT_BUFFER,
+            .CPUAccessFlags = 0,
+        };
 
+        hr = device->CreateBuffer(&bd, nullptr, m_cbChangeOnCameraMovement.GetAddressOf());
         if (FAILED(hr))
             return hr;
     }

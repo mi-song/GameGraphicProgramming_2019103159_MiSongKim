@@ -1,9 +1,12 @@
 /*+===================================================================
   File:      CUBE.H
+
   Summary:   Cube header file contains declarations of Cube class
              used for the lab samples of Game Graphics Programming
              course.
+
   Classes: Cube
+
   © 2022 Kyung Hee University
 ===================================================================+*/
 #pragma once
@@ -16,8 +19,10 @@ namespace library
 {
     /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
       Class:    Camera
+
       Summary:  Immitates a camera that moves according to the WASD and
                 mouse input.
+
       Methods:  GetEye
                   Getter for the eye vector
                 GetAt

@@ -1,9 +1,12 @@
 ﻿/*+===================================================================
   File:      RENDERER.H
+
   Summary:   Renderer header file contains declarations of Renderer
              class used for the lab samples of Game Graphics
              Programming course.
+
   Classes: Renderer
+
   � 2022 Kyung Hee University
 ===================================================================+*/
 #pragma once
@@ -21,8 +24,10 @@ namespace library
 {
     /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
       Class:    Renderer
+
       Summary:  Renderer initializes Direct3D, and renders renderable
                 data onto the screen
+
       Methods:  Initialize
                   Creates Direct3D device and swap chain
                 AddRenderable
@@ -89,8 +94,8 @@ namespace library
         Camera m_camera;
         XMMATRIX m_projection;
 
-        std::unordered_map<PCWSTR, std::shared_ptr<Renderable>> m_renderables;
-        std::unordered_map<PCWSTR, std::shared_ptr<VertexShader>> m_vertexShaders;
-        std::unordered_map<PCWSTR, std::shared_ptr<PixelShader>> m_pixelShaders;
+        std::unordered_map<std::wstring, std::shared_ptr<Renderable>> m_renderables;
+        std::unordered_map<std::wstring, std::shared_ptr<VertexShader>> m_vertexShaders;
+        std::unordered_map<std::wstring, std::shared_ptr<PixelShader>> m_pixelShaders;
     };
 }

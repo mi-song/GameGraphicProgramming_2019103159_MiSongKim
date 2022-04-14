@@ -34,9 +34,9 @@ namespace library
         , m_padding()
         , m_camera(Camera(XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f)))
         , m_projection(XMMatrixIdentity())
-        , m_renderables(std::unordered_map<PCWSTR, std::shared_ptr<Renderable>>())
-        , m_vertexShaders(std::unordered_map<PCWSTR, std::shared_ptr<VertexShader>>())
-        , m_pixelShaders(std::unordered_map<PCWSTR, std::shared_ptr<PixelShader>>())
+        , m_renderables(std::unordered_map<std::wstring, std::shared_ptr<Renderable>>())
+        , m_vertexShaders(std::unordered_map<std::wstring, std::shared_ptr<VertexShader>>())
+        , m_pixelShaders(std::unordered_map<std::wstring, std::shared_ptr<PixelShader>>())
     { }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -274,14 +274,23 @@ namespace library
         m_immediateContext->RSSetViewports(1, &vp);
 
         // Initialize the projection matrix
-        m_projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, width / (FLOAT)height, 0.01f, 100.0f);
+        m_projection = XMMatrixPerspectiveFovLH(XM_PIDIV2, (FLOAT)width / (FLOAT)height, 0.01f, 100.0f);
 
-        // Create Constant Buffer(CBChangeOnResize) 
-        D3D11_BUFFER_DESC bd = {};
-        bd.ByteWidth = sizeof(CBChangeOnResize);
+        D3D11_BUFFER_DESC bd =
+        {
+            .ByteWidth = sizeof(CBChangeOnResize),
+            .Usage = D3D11_USAGE_DEFAULT,
+            .BindFlags = D3D11_BIND_CONSTANT_BUFFER,
+            .CPUAccessFlags = 0,
+        };
+
         hr = m_d3dDevice->CreateBuffer(&bd, nullptr, m_cbChangeOnResize.GetAddressOf());
         if (FAILED(hr))
             return hr;
+
+        CBChangeOnResize cbChangesOnResize;
+        cbChangesOnResize.Projection = XMMatrixTranspose(m_projection);
+        m_immediateContext->UpdateSubresource(m_cbChangeOnResize.Get(), 0, nullptr, &cbChangesOnResize, 0, 0);
 
         // Initialize the shaders 
         for (auto pixelShadersElem : m_pixelShaders)
@@ -391,14 +400,11 @@ namespace library
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::HandleInput
-
       Summary:  Add the pixel shader into the renderer and initialize it
-
       Args:     const DirectionsInput& directions
                   Data structure containing keyboard input data
                 const MouseRelativeMovement& mouseRelativeMovement
                   Data structure containing mouse relative input data
-
       Modifies: [m_camera].
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     /*--------------------------------------------------------------------
@@ -450,20 +456,13 @@ namespace library
         m_immediateContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
         // Create camera constant buffer and update 
+        m_camera.Initialize(m_d3dDevice.Get());
         CBChangeOnCameraMovement cbChangeOnCameraMovement;
         cbChangeOnCameraMovement.View = XMMatrixTranspose(m_camera.GetView());
         m_immediateContext->UpdateSubresource(m_camera.GetConstantBuffer().Get(), 0, nullptr, &cbChangeOnCameraMovement, 0, 0);
 
         for (auto renderablesElem : m_renderables)
         {
-            // Create renderable constant buffer and update 
-            D3D11_BUFFER_DESC bd = {};
-            bd.Usage = D3D11_USAGE_DEFAULT;
-            bd.ByteWidth = sizeof(CBChangesEveryFrame);
-            bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-            bd.CPUAccessFlags = 0;
-            m_d3dDevice->CreateBuffer(&bd, nullptr, renderablesElem.second->GetConstantBuffer().GetAddressOf());
-
             CBChangesEveryFrame cbChangesEveryFrame;
             cbChangesEveryFrame.World = XMMatrixTranspose(renderablesElem.second->GetWorldMatrix());
             m_immediateContext->UpdateSubresource(renderablesElem.second->GetConstantBuffer().Get(), 0, nullptr, &cbChangesEveryFrame, 0, 0);
@@ -489,6 +488,7 @@ namespace library
             m_immediateContext->VSSetConstantBuffers(2, 1, renderablesElem.second->GetConstantBuffer().GetAddressOf());
             m_immediateContext->PSSetShader(renderablesElem.second->GetPixelShader().Get(), nullptr, 0);
             m_immediateContext->PSSetConstantBuffers(2, 1, renderablesElem.second->GetConstantBuffer().GetAddressOf());
+            m_immediateContext->PSSetShaderResources(0, 1, renderablesElem.second->GetTextureResourceView().GetAddressOf());
             m_immediateContext->PSSetSamplers(0, 1, renderablesElem.second->GetSamplerState().GetAddressOf());
 
             // Draw

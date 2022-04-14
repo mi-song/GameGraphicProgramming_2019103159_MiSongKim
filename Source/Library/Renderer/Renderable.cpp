@@ -1,4 +1,5 @@
 ﻿#include "Renderer/Renderable.h"
+#include "Texture/DDSTextureLoader.h"
 
 namespace library
 {
@@ -18,14 +19,14 @@ namespace library
       TODO: Renderable::Renderable definition (remove the comment)
     --------------------------------------------------------------------*/
 
-    Renderable::Renderable(const std::filesystem::path& textureFilePath)
+    Renderable::Renderable(_In_ const std::filesystem::path& textureFilePath)
         : m_vertexBuffer(nullptr)
         , m_indexBuffer(nullptr)
         , m_constantBuffer(nullptr)
         , m_textureRV(nullptr)
         , m_samplerLinear(nullptr)
-        , m_vertexShader(std::make_shared<VertexShader>())
-        , m_pixelShader(std::make_shared<PixelShader>())
+        , m_vertexShader(nullptr)
+        , m_pixelShader(nullptr)
         , m_textureFilePath(textureFilePath)
         , m_world(XMMatrixIdentity())
     { }
@@ -84,26 +85,29 @@ namespace library
         if (FAILED(hr))
             return hr;
 
-        // Create the constant buffers
-        // bd.ByteWidth = sizeof(CBChangesEveryFrame);
-        // hr = pDevice->CreateBuffer(&bd, nullptr, m_constantBuffer.GetAddressOf());
-        // if (FAILED(hr))
-        //    return hr;
+        // Create constant buffer
+        bd.Usage = D3D11_USAGE_DEFAULT;
+        bd.ByteWidth = sizeof(CBChangesEveryFrame);
+        bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        bd.CPUAccessFlags = 0;
+        pDevice->CreateBuffer(&bd, nullptr, m_constantBuffer.GetAddressOf());
 
         // Load the Texture
-        hr = CreateDDSTextureFromFile(pDevice, m_textureFilePath.c_str(), nullptr, m_textureRV.GetAddressOf());
+        hr = CreateDDSTextureFromFile(pDevice, m_textureFilePath.filename().wstring().c_str(), nullptr, m_textureRV.GetAddressOf());
         if (FAILED(hr))
             return hr;
 
         // Create the sample state
-        D3D11_SAMPLER_DESC sampDesc = {};
-        sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-        sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-        sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-        sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-        sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-        sampDesc.MinLOD = 0;
-        sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+        D3D11_SAMPLER_DESC sampDesc =
+        {
+            .Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+            .AddressU = D3D11_TEXTURE_ADDRESS_WRAP,
+            .AddressV = D3D11_TEXTURE_ADDRESS_WRAP,
+            .AddressW = D3D11_TEXTURE_ADDRESS_WRAP,
+            .ComparisonFunc = D3D11_COMPARISON_NEVER,
+            .MinLOD = 0,
+            .MaxLOD = D3D11_FLOAT32_MAX,
+        };
         hr = pDevice->CreateSamplerState(&sampDesc, m_samplerLinear.GetAddressOf());
         if (FAILED(hr))
             return hr;

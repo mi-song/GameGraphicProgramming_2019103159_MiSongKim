@@ -100,13 +100,15 @@
   <ItemGroup>
     <ClCompile Include="Cube\BaseCube.cpp" />
     <ClCompile Include="Cube\Cube.cpp" />
-    <ClCompile Include="Cube\MiniCube.cpp" />
+    <ClCompile Include="Cube\EarthCube.cpp" />
+    <ClCompile Include="Cube\SunCube.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube\BaseCube.h" />
     <ClInclude Include="Cube\Cube.h" />
-    <ClInclude Include="Cube\MiniCube.h" />
+    <ClInclude Include="Cube\EarthCube.h" />
+    <ClInclude Include="Cube\SunCube.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\PS.hlsl">

@@ -27,9 +27,6 @@
     <Filter Include="Header Files\Renderer">
       <UniqueIdentifier>{6bcd4ba9-c09b-4c1f-b188-4e644b091113}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shader">
-      <UniqueIdentifier>{bf1707fa-2446-4a22-b8f7-8d8966af32ee}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Shader">
       <UniqueIdentifier>{7462f014-0d58-4342-9bc9-833f266a2e82}</UniqueIdentifier>
     </Filter>

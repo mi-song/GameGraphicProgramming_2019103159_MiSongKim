@@ -17,6 +17,8 @@
 #include <source_location>
 
 #include "Cube/Cube.h"
+#include "Cube/SunCube.h"
+#include "Cube/EarthCube.h"
 #include "Game/Game.h"
 
 /*F+F+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -68,12 +70,44 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
+    std::shared_ptr<SunCube> sunCube = std::make_shared<SunCube>("sun.dds");
+    if (FAILED(game->GetRenderer()->AddRenderable(L"SunCube", sunCube)))
+    {
+        return 0;
+    }
+
+    std::shared_ptr<EarthCube> earthCube = std::make_shared<EarthCube>("earth.dds");
+    if (FAILED(game->GetRenderer()->AddRenderable(L"EarthCube", earthCube)))
+    {
+        return 0;
+    }
+
     if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"Cube", L"MainShader")))
     {
         return 0;
     }
 
     if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"Cube", L"MainShader")))
+    {
+        return 0;
+    }
+
+    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"SunCube", L"MainShader")))
+    {
+        return 0;
+    }
+
+    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"SunCube", L"MainShader")))
+    {
+        return 0;
+    }
+
+    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"EarthCube", L"MainShader")))
+    {
+        return 0;
+    }
+
+    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"EarthCube", L"MainShader")))
     {
         return 0;
     }

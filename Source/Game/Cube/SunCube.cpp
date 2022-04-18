@@ -1,4 +1,4 @@
-#include "Cube/Cube3.h"
+#include "Cube/SunCube.h"
 
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
   Method:   SunCube::SunCube
@@ -12,7 +12,7 @@ M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
   TODO: Cube::Cube definition (remove the comment)
 --------------------------------------------------------------------*/
 
-Cube3::Cube3(const std::filesystem::path& textureFilePath)
+SunCube::SunCube(const std::filesystem::path& textureFilePath)
     : BaseCube::BaseCube(textureFilePath)
 { }
 
@@ -25,12 +25,11 @@ Cube3::Cube3(const std::filesystem::path& textureFilePath)
               Time difference of a frame
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
 
-void Cube3::Update(_In_ FLOAT deltaTime)
+void SunCube::Update(_In_ FLOAT deltaTime)
 {
-    XMMATRIX mTranslate = XMMatrixTranslation(4.0f, XMScalarSin(deltaTime*10.0f), 0.0f);
-    XMMATRIX mOrbit = XMMatrixRotationY(deltaTime*2.0f);
-    XMMATRIX mScale = XMMatrixScaling(0.6f, 0.6f, 0.6f);
-    m_world = mTranslate * mOrbit * mScale;
+    XMMATRIX mOrbit = XMMatrixRotationY(deltaTime);
+    XMMATRIX mScale = XMMatrixScaling(0.7f, 0.7f, 0.7f);
+    m_world = mScale * mOrbit;
 }
 
 

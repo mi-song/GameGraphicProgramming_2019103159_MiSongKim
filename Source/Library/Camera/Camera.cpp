@@ -126,12 +126,12 @@ namespace library
     {
         float speed = m_travelSpeed * deltaTime;
 
-        if ((m_pitch + static_cast<float>(mouseRelativeMovement.Y) * m_rotationSpeed) >= -XM_PIDIV2
-            && (m_pitch + static_cast<float>(mouseRelativeMovement.Y) * m_rotationSpeed) <= XM_PIDIV2)
+        if ((m_pitch + static_cast<FLOAT>(mouseRelativeMovement.Y) * m_rotationSpeed) >= -XM_PIDIV2
+            && (m_pitch + static_cast<FLOAT>(mouseRelativeMovement.Y) * m_rotationSpeed) <= XM_PIDIV2)
         {
-            m_pitch += static_cast<float>(mouseRelativeMovement.Y) * m_rotationSpeed;
+            m_pitch += static_cast<FLOAT>(mouseRelativeMovement.Y) * m_rotationSpeed;
         }
-        m_yaw += static_cast<float>(mouseRelativeMovement.X) * m_rotationSpeed;
+        m_yaw += static_cast<FLOAT>(mouseRelativeMovement.X) * m_rotationSpeed;
 
         if (directions.bLeft) // A
         {
@@ -190,6 +190,8 @@ namespace library
         hr = device->CreateBuffer(&bd, nullptr, m_cbChangeOnCameraMovement.GetAddressOf());
         if (FAILED(hr))
             return hr;
+
+        return S_OK;
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M

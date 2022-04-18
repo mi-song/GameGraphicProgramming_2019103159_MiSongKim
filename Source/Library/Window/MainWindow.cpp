@@ -99,22 +99,22 @@ namespace library
         case WM_KEYDOWN:
             switch (wParam) {
             case 0x57: // W
-                m_directions.bFront = true;
+                m_directions.bFront = TRUE;
                 break;
             case 0x41: // A
-                m_directions.bLeft = true;
+                m_directions.bLeft = TRUE;
                 break;
             case 0x53: // S
-                m_directions.bBack = true;
+                m_directions.bBack = TRUE;
                 break;
             case 0x44: // D 
-                m_directions.bRight = true;
+                m_directions.bRight = TRUE;
                 break;
             case VK_SPACE:
-                m_directions.bUp = true;
+                m_directions.bUp = TRUE;
                 break;
             case VK_SHIFT:
-                m_directions.bDown = true;
+                m_directions.bDown = TRUE;
                 break;
             }
             break;
@@ -122,22 +122,22 @@ namespace library
         case WM_KEYUP:
             switch (wParam) {
             case 0x57:
-                m_directions.bFront = false;
+                m_directions.bFront = FALSE;
                 break;
             case 0x41:
-                m_directions.bLeft = false;
+                m_directions.bLeft = FALSE;
                 break;
             case 0x53:
-                m_directions.bBack = false;
+                m_directions.bBack = FALSE;
                 break;
             case 0x44:
-                m_directions.bRight = false;
+                m_directions.bRight = FALSE;
                 break;
             case VK_SPACE:
-                m_directions.bUp = false;
+                m_directions.bUp = FALSE;
                 break;
             case VK_SHIFT:
-                m_directions.bDown = false;
+                m_directions.bDown = FALSE;
                 break;
             }
 

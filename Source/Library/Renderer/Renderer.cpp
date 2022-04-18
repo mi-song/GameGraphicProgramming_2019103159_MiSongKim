@@ -159,11 +159,7 @@ namespace library
                 .Width = width,
                 .Height = height,
                 .Format = DXGI_FORMAT_R8G8B8A8_UNORM,
-                .SampleDesc =
-                {
-                    .Count = 1,
-                    .Quality = 0
-                },
+                .SampleDesc = { .Count = 1, .Quality = 0 },
                 .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
                 .BufferCount = 1
             };
@@ -183,18 +179,10 @@ namespace library
                 {
                     .Width = width,
                     .Height = height,
-                    .RefreshRate =
-                    {
-                        .Numerator = 60,
-                        .Denominator = 1
-                    },
+                    .RefreshRate = { .Numerator = 60, .Denominator = 1 },
                     .Format = DXGI_FORMAT_R8G8B8A8_UNORM,
                 },
-                .SampleDesc =
-                {
-                    .Count = 1,
-                    .Quality = 1,
-                },
+                .SampleDesc = { .Count = 1, .Quality = 1 },
                 .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
                 .BufferCount = 1,
                 .OutputWindow = hWnd,
@@ -228,11 +216,7 @@ namespace library
             .MipLevels = 1,
             .ArraySize = 1,
             .Format = DXGI_FORMAT_D24_UNORM_S8_UINT,
-            .SampleDesc =
-            {
-                .Count = 1,
-                .Quality = 0,
-            },
+            .SampleDesc = { .Count = 1, .Quality = 0 },
             .Usage = D3D11_USAGE_DEFAULT,
             .BindFlags = D3D11_BIND_DEPTH_STENCIL,
             .CPUAccessFlags = 0,
@@ -329,9 +313,9 @@ namespace library
 
     HRESULT Renderer::AddRenderable(_In_ PCWSTR pszRenderableName, _In_ const std::shared_ptr<Renderable>& renderable)
     {
-        if (m_renderables.find(pszRenderableName) != m_renderables.end())
+        if (m_renderables.contains(pszRenderableName))
         {
-            return E_FAIL;
+            return E_FAIL; 
         }
         else
         {
@@ -358,7 +342,7 @@ namespace library
 
     HRESULT Renderer::AddVertexShader(_In_ PCWSTR pszVertexShaderName, _In_ const std::shared_ptr<VertexShader>& vertexShader)
     {
-        if (m_vertexShaders.find(pszVertexShaderName) != m_vertexShaders.end())
+        if (m_vertexShaders.contains(pszVertexShaderName))
         {
             return E_FAIL;
         }
@@ -387,7 +371,7 @@ namespace library
 
     HRESULT Renderer::AddPixelShader(_In_ PCWSTR pszPixelShaderName, _In_ const std::shared_ptr<PixelShader>& pixelShader)
     {
-        if (m_pixelShaders.find(pszPixelShaderName) != m_pixelShaders.end())
+        if (m_pixelShaders.contains(pszPixelShaderName))
         {
             return E_FAIL;
         }

@@ -22,37 +22,51 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{c28cbba0-6918-4158-8b89-daea82c90fac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Light">
+      <UniqueIdentifier>{d8df8b34-bff7-4c3b-91bb-0d87de875d09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Light">
+      <UniqueIdentifier>{c12277fa-4eab-4bcb-8706-a9465b348f9f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Cube\BaseCube.cpp">
-      <Filter>Source Files\Cube</Filter>
-    </ClCompile>
-    <ClCompile Include="Cube\EarthCube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
     <ClCompile Include="Cube\Cube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
-    <ClCompile Include="Cube\SunCube.cpp">
+    <ClCompile Include="Cube\RotatingCube.cpp">
       <Filter>Source Files\Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Light\RotatingPointLight.cpp">
+      <Filter>Source Files\Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube\BaseCube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
-    <ClInclude Include="Cube\EarthCube.h">
-      <Filter>Header Files\Cube</Filter>
-    </ClInclude>
     <ClInclude Include="Cube\Cube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
-    <ClInclude Include="Cube\SunCube.h">
+    <ClInclude Include="Cube\RotatingCube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
+    <ClInclude Include="Light\RotatingPointLight.h">
+      <Filter>Header Files\Light</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\PhongShaders.fxh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Shaders.fxh">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\PS.hlsl">
@@ -61,10 +75,5 @@
     <FxCompile Include="Shaders\VS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\Shaders.fxh">
-      <Filter>Shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>

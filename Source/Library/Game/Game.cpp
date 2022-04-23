@@ -91,6 +91,7 @@ namespace library
 				);
 				m_mainWindow->ResetMouseMovement();
 				m_renderer->Update(ElapsedTime);
+				QueryPerformanceCounter(&StartingTime);
 				m_renderer->Render();
 			}
 		}

@@ -8,13 +8,23 @@
   Args:     const std::filesystem::path& textureFilePath
               Path to the texture to use
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-/*--------------------------------------------------------------------
-  TODO: Cube::Cube definition (remove the comment)
---------------------------------------------------------------------*/
+Cube::Cube(_In_ const std::filesystem::path& textureFilePath)
+    : BaseCube(textureFilePath)
+{
+}
 
-Cube::Cube(const std::filesystem::path& textureFilePath)
-    : BaseCube::BaseCube(textureFilePath)
-{ }
+/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+  Method:   Cube::Cube
+
+  Summary:  Constructor
+
+  Args:     const XMFLOAT4& outputColor
+              Default color of the cube
+M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+Cube::Cube(_In_ const XMFLOAT4& outputColor)
+    : BaseCube(outputColor)
+{
+}
 
 /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
   Method:   Cube::Update
@@ -28,9 +38,5 @@ Cube::Cube(const std::filesystem::path& textureFilePath)
 M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
 void Cube::Update(_In_ FLOAT deltaTime)
 {
-    XMMATRIX mScale = XMMatrixScaling(0.4f, 0.4f, 0.4f);
-    XMMATRIX mTranslate = XMMatrixTranslation(-2.0f, 0.0f, 0.0f);
-    XMMATRIX mOrbit = XMMatrixRotationY(-deltaTime * 4.0f);
-
-    m_world = mScale * mTranslate * mOrbit;
+    // Does nothing
 }

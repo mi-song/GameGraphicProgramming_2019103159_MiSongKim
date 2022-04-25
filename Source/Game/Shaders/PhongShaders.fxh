@@ -148,7 +148,7 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
     output.Normal = normalize( mul ( float4 ( input.Normal, 0 ), World ).xyz);
     
     // World Position
-    output.WorldPosition = mul( input.Position, World );
+    output.WorldPosition = mul( input.Position, World ).xyz;
 
     output.TexCoord = input.TexCoord;
 

@@ -56,7 +56,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories);$(SolutionDir)..\External\Assimp\Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -65,11 +65,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\Library\x64\Debug"
+      <Command>xcopy /y /d "$(SolutionDir)..\External\Assimp\Binary\x64\Debug\assimp-vc142-mtd.dll" "$(OutDir)"
+mkdir "$(SolutionDir)..\Library\x64\Debug"
 copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Debug"</Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\External\Assimp\Library\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -77,6 +79,10 @@ copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Debug"</Command>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -86,7 +92,7 @@ copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Debug"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)..\External\Assimp\Include;%(AdditionalIncludeDirectories);$(SolutionDir)..\External\Assimp\Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -97,11 +103,13 @@ copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Debug"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(SolutionDir)..\Library\x64\Release"
+      <Command>xcopy /y /d "$(SolutionDir)..\External\Assimp\Binary\x64\Release\assimp-vc142-mt.dll" "$(OutDir)"
+mkdir "$(SolutionDir)..\Library\x64\Release"
 copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Release"</Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\External\Assimp\Library\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -109,12 +117,17 @@ copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Release"</Command>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Light\PointLight.h" />
+    <ClInclude Include="Model\Model.h" />
     <ClInclude Include="Renderer\DataTypes.h" />
     <ClInclude Include="Renderer\Renderable.h" />
     <ClInclude Include="Renderer\Renderer.h" />
@@ -123,6 +136,9 @@ copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Release"</Command>
     <ClInclude Include="Shader\Shader.h" />
     <ClInclude Include="Shader\VertexShader.h" />
     <ClInclude Include="Texture\DDSTextureLoader.h" />
+    <ClInclude Include="Texture\Material.h" />
+    <ClInclude Include="Texture\Texture.h" />
+    <ClInclude Include="Texture\WICTextureLoader.h" />
     <ClInclude Include="Window\BaseWindow.h" />
     <ClInclude Include="Window\MainWindow.h" />
   </ItemGroup>
@@ -133,12 +149,16 @@ copy "$(TargetDir)" "$(SolutionDir)..\Library\x64\Release"</Command>
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Light\PointLight.cpp" />
+    <ClCompile Include="Model\Model.cpp" />
     <ClCompile Include="Renderer\Renderable.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Shader\PixelShader.cpp" />
     <ClCompile Include="Shader\Shader.cpp" />
     <ClCompile Include="Shader\VertexShader.cpp" />
     <ClCompile Include="Texture\DDSTextureLoader.cpp" />
+    <ClCompile Include="Texture\Material.cpp" />
+    <ClCompile Include="Texture\Texture.cpp" />
+    <ClCompile Include="Texture\WICTextureLoader.cpp" />
     <ClCompile Include="Window\MainWindow.cpp" />
   </ItemGroup>
   <ItemGroup>

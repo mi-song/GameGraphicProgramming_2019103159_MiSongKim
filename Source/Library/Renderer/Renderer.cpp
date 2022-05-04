@@ -530,14 +530,29 @@ namespace library
             m_immediateContext->PSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
             m_immediateContext->PSSetConstantBuffers(2, 1, renderablesElem.second->GetConstantBuffer().GetAddressOf());
             m_immediateContext->PSSetConstantBuffers(3, 1, m_cbLights.GetAddressOf());
+     
             if (renderablesElem.second->HasTexture())
             {
-                m_immediateContext->PSSetShaderResources(0, 1, renderablesElem.second->GetTextureResourceView().GetAddressOf());
-                m_immediateContext->PSSetSamplers(0, 1, renderablesElem.second->GetSamplerState().GetAddressOf());
+                for (UINT i = 0; i < renderablesElem.second->GetNumMeshes(); ++i)
+                {
+                    UINT MaterialIndex = renderablesElem.second->GetMesh(i).uMaterialIndex;
+
+                    m_immediateContext->PSSetShaderResources(0, 1, 
+                        renderablesElem.second->GetMaterial(MaterialIndex).pDiffuse->GetTextureResourceView().GetAddressOf());
+                    m_immediateContext->PSSetSamplers(0, 1, 
+                        renderablesElem.second->GetMaterial(MaterialIndex).pDiffuse->GetSamplerState().GetAddressOf());
+
+                    // Draw
+                    m_immediateContext->DrawIndexed(renderablesElem.second->GetMesh(i).uNumIndices,
+                        renderablesElem.second->GetMesh(i).uBaseIndex,
+                        renderablesElem.second->GetMesh(i).uBaseVertex);
+                }
             }
-     
-            // Draw
-            m_immediateContext->DrawIndexed(renderablesElem.second->GetNumIndices(), 0, 0);
+            else 
+            {
+                // Draw
+                m_immediateContext->DrawIndexed(renderablesElem.second->GetNumIndices(), 0, 0);
+            }
         }
 
         // Present the information rendered to the back buffer to the front buffer (the screen)

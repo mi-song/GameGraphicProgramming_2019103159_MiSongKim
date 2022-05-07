@@ -535,12 +535,8 @@ namespace library
             {
                 for (UINT i = 0; i < renderablesElem.second->GetNumMeshes(); ++i)
                 {
-                    UINT MaterialIndex = renderablesElem.second->GetMesh(i).uMaterialIndex;
-
-                    m_immediateContext->PSSetShaderResources(0, 1, 
-                        renderablesElem.second->GetMaterial(MaterialIndex).pDiffuse->GetTextureResourceView().GetAddressOf());
-                    m_immediateContext->PSSetSamplers(0, 1, 
-                        renderablesElem.second->GetMaterial(MaterialIndex).pDiffuse->GetSamplerState().GetAddressOf());
+                    m_immediateContext->PSSetShaderResources(0, 1, renderablesElem.second->GetMaterial(renderablesElem.second->GetMesh(i).uMaterialIndex).pDiffuse->GetTextureResourceView().GetAddressOf());
+                    m_immediateContext->PSSetSamplers(0, 1, renderablesElem.second->GetMaterial(renderablesElem.second->GetMesh(i).uMaterialIndex).pDiffuse->GetSamplerState().GetAddressOf());
 
                     // Draw
                     m_immediateContext->DrawIndexed(renderablesElem.second->GetMesh(i).uNumIndices,

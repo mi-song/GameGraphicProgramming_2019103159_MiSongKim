@@ -16,6 +16,10 @@ namespace library
       TODO: Voxel::Voxel definition (remove the comment)
     --------------------------------------------------------------------*/
 
+    Voxel::Voxel(_In_ const XMFLOAT4& outputColor)
+        : InstancedRenderable(outputColor)
+    { }
+
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Voxel::Voxel
 
@@ -29,6 +33,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Voxel::Voxel definition (remove the comment)
     --------------------------------------------------------------------*/
+
+    Voxel::Voxel(_In_ std::vector<InstanceData>&& aInstanceData, _In_ const XMFLOAT4& outputColor)
+        : InstancedRenderable(std::move(aInstanceData), outputColor)
+    { }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Voxel::Initialize
@@ -47,6 +55,21 @@ namespace library
       TODO: Voxel::Initialize definition (remove the comment)
     --------------------------------------------------------------------*/
 
+    HRESULT Voxel::Initialize(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext)
+    {
+        HRESULT hr = S_OK;
+
+        hr = initialize(pDevice, pImmediateContext);
+        if (FAILED(hr))
+            return hr;
+
+        hr = initializeInstance(pDevice);
+        if (FAILED(hr))
+            return hr;
+
+        return S_OK;
+    }
+
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Voxel::Update
 
@@ -58,6 +81,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Voxel::Update definition (remove the comment)
     --------------------------------------------------------------------*/
+
+    void Voxel::Update(_In_ FLOAT deltaTime)
+    {
+    }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Voxel::GetNumVertices
@@ -71,6 +98,11 @@ namespace library
       TODO: Voxel::GetNumVertices definition (remove the comment)
     --------------------------------------------------------------------*/
 
+    UINT Voxel::GetNumVertices() const
+    {
+        return NUM_VERTICES;
+    }
+
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Voxel::GetNumIndices
 
@@ -82,6 +114,11 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Voxel::GetNumIndices definition (remove the comment)
     --------------------------------------------------------------------*/
+
+    UINT Voxel::GetNumIndices() const
+    {
+        return NUM_INDICES;
+    }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Voxel::getVertices
@@ -95,6 +132,11 @@ namespace library
       TODO: Voxel::getVertices definition (remove the comment)
     --------------------------------------------------------------------*/
 
+    const SimpleVertex* Voxel::getVertices() const
+    {
+        return VERTICES;
+    }
+
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Voxel::getIndices
 
@@ -106,4 +148,9 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Voxel::getIndices definition (remove the comment)
     --------------------------------------------------------------------*/
+
+    const WORD* Voxel::getIndices() const
+    {
+        return INDICES;
+    }
 }

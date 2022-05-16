@@ -130,16 +130,16 @@ PS_INPUT VSVoxel(VS_INPUT input)
     // Space transformation
     output.Position = mul(input.Position, input.Transform);
     output.Position = mul(output.Position, World);
+    
+      // World position 
+    output.WorldPosition = output.Position; 
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
 
     // Compute the world normal 
+    output.Normal = normalize(mul(float4(input.Normal, 0), input.Transform).xyz);
     output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
-    
-    // World Position
-    output.WorldPosition = mul(input.Position, input.Transform).xyz;
-    output.WorldPosition = mul(input.Position, World).xyz;
-
+   
     // output.TexCoord = input.TexCoord;
 
     return output;

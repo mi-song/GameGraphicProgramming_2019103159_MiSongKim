@@ -33,11 +33,14 @@ namespace library
         , m_cbChangeOnResize(nullptr)
         , m_cbLights(nullptr)
         , m_pszMainSceneName(L"Default")
+        , m_padding()
         , m_camera(XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f))
         , m_projection(XMMatrixIdentity())
-        , m_renderables(std::unordered_map<std::wstring, std::shared_ptr<Renderable>>())
-        , m_vertexShaders(std::unordered_map<std::wstring, std::shared_ptr<VertexShader>>())
-        , m_pixelShaders(std::unordered_map<std::wstring, std::shared_ptr<PixelShader>>())
+        , m_renderables(std::unordered_map<PCWSTR, std::shared_ptr<Renderable>>())
+        , m_models(std::unordered_map<PCWSTR, std::shared_ptr<Model>>())
+        , m_aPointLights()
+        , m_vertexShaders(std::unordered_map<PCWSTR, std::shared_ptr<VertexShader>>())
+        , m_pixelShaders(std::unordered_map<PCWSTR, std::shared_ptr<PixelShader>>())
         , m_scenes(std::unordered_map<std::wstring, std::shared_ptr<Scene>>())
     { }
 
@@ -304,6 +307,38 @@ namespace library
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   Renderer::AddModel
+
+      Summary:  Add a model object
+      
+      Args:     PCWSTR pszModelName
+                  Key of the model object
+                const std::shared_ptr<Model>& pModel
+                  Shared pointer to the model object
+      
+      Modifies: [m_models].
+      
+      Returns:  HRESULT
+                  Status code.
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::AddModel definition (remove the comment)
+    --------------------------------------------------------------------*/
+
+    HRESULT Renderer::AddModel(_In_ PCWSTR pszModelName, _In_ const std::shared_ptr<Model>& pModel)
+    {
+        if (m_models.contains(pszModelName))
+        {
+            return E_FAIL;
+        }
+        else
+        {
+            m_models[pszModelName] = pModel;
+            return S_OK;
+        }
+    }
+
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderer::AddRenderable
 
       Summary:  Add a renderable object and initialize the object
@@ -551,7 +586,7 @@ namespace library
       Summary:  Render the frame
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
 
-    void Renderer::Render()
+    void Renderer::Render(UINT boneIdex)
     {
         // Clear the backbuffer
         m_immediateContext->ClearRenderTargetView(m_renderTargetView.Get(), Colors::MidnightBlue);
@@ -689,6 +724,71 @@ namespace library
         
         // Present the information rendered to the back buffer to the front buffer (the screen)
         m_swapChain->Present(0, 0);
+    }
+
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   Renderer::SetVertexShaderOfModel
+
+      Summary:  Sets the pixel shader for a model
+
+      Args:     PCWSTR pszModelName
+                  Key of the model
+                PCWSTR pszVertexShaderName
+                  Key of the vertex shader
+
+      Modifies: [m_renderables].
+
+      Returns:  HRESULT
+                  Status code
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::SetVertexShaderOfModel definition (remove the comment)
+    --------------------------------------------------------------------*/
+
+    HRESULT Renderer::SetVertexShaderOfModel(_In_ PCWSTR pszModelName, _In_ PCWSTR pszVertexShaderName)
+    {
+        HRESULT hr = S_OK;
+
+        hr = AddVertexShader(pszModelName, m_vertexShaders[pszVertexShaderName]);
+        if (FAILED(hr))
+            return hr;
+
+        m_models[pszModelName]->SetVertexShader(m_vertexShaders[pszVertexShaderName]);
+
+        return S_OK;
+
+    }
+
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   Renderer::SetPixelShaderOfModel
+
+      Summary:  Sets the pixel shader for a model
+
+      Args:     PCWSTR pszModelName
+                  Key of the model
+                PCWSTR pszPixelShaderName
+                  Key of the pixel shader
+
+      Modifies: [m_renderables].
+
+      Returns:  HRESULT
+                  Status code
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: Renderer::SetPixelShaderOfModel definition (remove the comment)
+    --------------------------------------------------------------------*/
+
+    HRESULT Renderer::SetPixelShaderOfModel(_In_ PCWSTR pszModelName, _In_ PCWSTR pszPixelShaderName)
+    {
+        HRESULT hr = S_OK;
+
+        hr = AddPixelShader(pszModelName, m_pixelShaders[pszPixelShaderName]);
+        if (FAILED(hr))
+            return hr;
+
+        m_models[pszModelName]->SetPixelShader(m_pixelShaders[pszPixelShaderName]);
+
+        return S_OK;
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M

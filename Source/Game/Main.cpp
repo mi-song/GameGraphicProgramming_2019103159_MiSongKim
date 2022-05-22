@@ -59,13 +59,13 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
-    std::shared_ptr<library::VertexShader> phongVertexShader = std::make_shared<library::VertexShader>(L"Shaders/Shaders.fxh", "VSPhong", "vs_5_0");
+    std::shared_ptr<library::VertexShader> phongVertexShader = std::make_shared<library::VertexShader>(L"Shaders/PhongShaders.fxh", "VSPhong", "vs_5_0");
     if (FAILED(game->GetRenderer()->AddVertexShader(L"PhongShader", phongVertexShader)))
     {
         return 0;
     }
 
-    std::shared_ptr<library::VertexShader> voxelVertexShader = std::make_shared<library::VertexShader>(L"Shaders/Shaders.fxh", "VSVoxel", "vs_5_0");
+    std::shared_ptr<library::VertexShader> voxelVertexShader = std::make_shared<library::VertexShader>(L"Shaders/VoxelShaders.fxh", "VSVoxel", "vs_5_0");
     if (FAILED(game->GetRenderer()->AddVertexShader(L"VoxelShader", voxelVertexShader)))
     {
         return 0;
@@ -77,13 +77,13 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         return 0;
     }
 
-    std::shared_ptr<library::PixelShader> phongPixelShader = std::make_shared<library::PixelShader>(L"Shaders/Shaders.fxh", "PSPhong", "ps_5_0");
+    std::shared_ptr<library::PixelShader> phongPixelShader = std::make_shared<library::PixelShader>(L"Shaders/PhongShaders.fxh", "PSPhong", "ps_5_0");
     if (FAILED(game->GetRenderer()->AddPixelShader(L"PhongShader", phongPixelShader)))
     {
         return 0;
     }
 
-    std::shared_ptr<library::PixelShader> voxelPixelShader = std::make_shared<library::PixelShader>(L"Shaders/Shaders.fxh", "PSVoxel", "ps_5_0");
+    std::shared_ptr<library::PixelShader> voxelPixelShader = std::make_shared<library::PixelShader>(L"Shaders/VoxelShaders.fxh", "PSVoxel", "ps_5_0");
     if (FAILED(game->GetRenderer()->AddPixelShader(L"VoxelShader", voxelPixelShader)))
     {
         return 0;
@@ -121,7 +121,7 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     }
 
     XMStoreFloat4(&color, Colors::Red);
-    std::shared_ptr<library::RotatingPointLight> rotatingDirectionalLight = std::make_shared<library::RotatingPointLight>(
+    std::shared_ptr<RotatingPointLight> rotatingDirectionalLight = std::make_shared<RotatingPointLight>(
         XMFLOAT4(0.0f, 0.0f, -5.0f, 1.0f),
         color
         );
@@ -174,7 +174,7 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
             {
                 FLOAT frequency = pow(2.0f, static_cast<FLOAT>(i));
                 frequencySum += 1.0f / frequency;
-                height += Scene::GetPerlin2d(frequency * static_cast<FLOAT>(x), frequency * static_cast<FLOAT>(z), 0.1f, 4u) / frequency;
+                height += library::Scene::GetPerlin2d(frequency * static_cast<FLOAT>(x), frequency * static_cast<FLOAT>(z), 0.1f, 4u) / frequency;
             }
             height /= frequencySum;
             height = pow(height * 1.2f, 1.25f);
@@ -188,72 +188,72 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
             {
                 FLOAT frequency = pow(2.0f, static_cast<FLOAT>(i));
                 frequencySum += 1.0f / frequency;
-                moisture += Scene::GetPerlin2d(frequency * static_cast<FLOAT>(x), frequency * static_cast<FLOAT>(z), 0.1f, 4u) / frequency;
+                moisture += library::Scene::GetPerlin2d(frequency * static_cast<FLOAT>(x), frequency * static_cast<FLOAT>(z), 0.1f, 4u) / frequency;
             }
             moisture /= frequencySum;
             moisture = pow(moisture * 1.2f, 1.25f);
 
-            eBlockType blockType = eBlockType::GRASSLAND;
+            library::eBlockType blockType = library::eBlockType::GRASSLAND;
 
             if (height < 0.1f)
             {
-                blockType = eBlockType::OCEAN;
+                blockType = library::eBlockType::OCEAN;
             }
             else if (height < 0.12f)
             {
-                blockType = eBlockType::SAND;
+                blockType = library::eBlockType::SAND;
             }
             else if (height > 0.8f)
             {
                 if (moisture < 0.1f)
                 {
-                    blockType = eBlockType::SCORCHED;
+                    blockType = library::eBlockType::SCORCHED;
                 }
                 else if (moisture < 0.2f)
                 {
-                    blockType = eBlockType::BARE;
+                    blockType = library::eBlockType::BARE;
                 }
                 else if (moisture < 0.5f)
                 {
-                    blockType = eBlockType::TUNDRA;
+                    blockType = library::eBlockType::TUNDRA;
                 }
                 else
                 {
-                    blockType = eBlockType::SNOW;
+                    blockType = library::eBlockType::SNOW;
                 }
             }
             else if (height > 0.6f)
             {
                 if (moisture < 0.33f)
                 {
-                    blockType = eBlockType::TEMPERATE_DESERT;
+                    blockType = library::eBlockType::TEMPERATE_DESERT;
                 }
                 else if (moisture < 0.66f)
                 {
-                    blockType = eBlockType::SHRUBLAND;
+                    blockType = library::eBlockType::SHRUBLAND;
                 }
                 else
                 {
-                    blockType = eBlockType::TAIGA;
+                    blockType = library::eBlockType::TAIGA;
                 }
             }
             else if (height > 0.3f)
             {
                 if (moisture < 0.16f)
                 {
-                    blockType = eBlockType::TEMPERATE_DESERT;
+                    blockType = library::eBlockType::TEMPERATE_DESERT;
                 }
                 else if (moisture < 0.5f)
                 {
-                    blockType = eBlockType::GRASSLAND;
+                    blockType = library::eBlockType::GRASSLAND;
                 }
                 else if (moisture < 0.83f)
                 {
-                    blockType = eBlockType::TEMPERATE_DECIDUOUS_FOREST;
+                    blockType = library::eBlockType::TEMPERATE_DECIDUOUS_FOREST;
                 }
                 else
                 {
-                    blockType = eBlockType::TEMPERATE_RAIN_FOREST;
+                    blockType = library::eBlockType::TEMPERATE_RAIN_FOREST;
                 }
             }
             else
@@ -261,19 +261,19 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
                 if (moisture < 0.16f)
                 {
-                    blockType = eBlockType::SUBTROPICAL_DESERT;
+                    blockType = library::eBlockType::SUBTROPICAL_DESERT;
                 }
                 else if (moisture < 0.33f)
                 {
-                    blockType = eBlockType::GRASSLAND;
+                    blockType = library::eBlockType::GRASSLAND;
                 }
                 else if (moisture < 0.66f)
                 {
-                    blockType = eBlockType::TROPICAL_SEASONAL_FOREST;
+                    blockType = library::eBlockType::TROPICAL_SEASONAL_FOREST;
                 }
                 else
                 {
-                    blockType = eBlockType::TROPICAL_RAIN_FOREST;
+                    blockType = library::eBlockType::TROPICAL_RAIN_FOREST;
                 }
             }
 

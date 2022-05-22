@@ -303,6 +303,12 @@ namespace library
             }
         }
 
+        // Initialize the models
+        for (auto modelElem = m_models.begin(); modelElem != m_models.end(); ++modelElem)
+        {
+            modelElem->second->Initialize(m_d3dDevice.Get(), m_immediateContext.Get());
+        }
+
         return S_OK;
     }
 
@@ -578,6 +584,11 @@ namespace library
                 voxelElem->second->GetVoxels()[i]->Update(deltaTime);
             }
         }
+        // Update the models
+        for (auto modelElem = m_models.begin(); modelElem != m_models.end(); ++modelElem)
+        {
+            modelElem->second->Update(deltaTime);
+        }
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -586,7 +597,7 @@ namespace library
       Summary:  Render the frame
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
 
-    void Renderer::Render(UINT boneIdex)
+    void Renderer::Render()
     {
         // Clear the backbuffer
         m_immediateContext->ClearRenderTargetView(m_renderTargetView.Get(), Colors::MidnightBlue);
@@ -676,6 +687,7 @@ namespace library
             }
         }
 
+        
         // Rendering the voxels of the main scene
         for (auto voxelElem = m_scenes.begin(); voxelElem != m_scenes.end(); ++voxelElem)
         {
@@ -719,6 +731,87 @@ namespace library
 
                 // Draw
                 m_immediateContext->DrawIndexedInstanced(voxelElem->second->GetVoxels()[i]->GetNumIndices(), voxelElem->second->GetVoxels()[i]->GetNumInstances(),0, 0, 0);
+            }
+        }
+
+        // Rendering the models 
+        for (auto modelElem = m_models.begin(); modelElem != m_models.end(); ++modelElem)
+        {
+            // Set the vertex buffer
+            UINT aStrides[2] =
+            {
+                static_cast<UINT>(sizeof(SimpleVertex)),
+                static_cast<UINT>(sizeof(AnimationData)),
+            };
+            UINT aOffsets[2] = { 0u, 0u };
+            
+            ComPtr<ID3D11Buffer> aBuffers[2]
+            {
+                modelElem->second->GetVertexBuffer(),
+                modelElem->second->GetAnimationBuffer()
+            };
+
+            for (UINT i = 0; i < 2; ++i)
+            {
+                m_immediateContext->IASetVertexBuffers(i, 1, aBuffers[i].GetAddressOf(), &aStrides[i], &aOffsets[i]);
+            }
+            
+            // Set the index buffer 
+            m_immediateContext->IASetIndexBuffer(modelElem->second->GetIndexBuffer().Get(), DXGI_FORMAT_R16_UINT, 0);
+
+            // Set primitive topology
+            m_immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+            // Set the input layout
+            m_immediateContext->IASetInputLayout(modelElem->second->GetVertexLayout().Get());
+
+            // Constant buffer CBSkinning
+            CBSkinning cbSkinning;
+            for (UINT i = 0; i < modelElem->second->GetBoneTransforms().size(); ++i)
+            {
+                cbSkinning.BoneTransforms[i] = XMMatrixTranspose(modelElem->second->GetBoneTransforms()[i]);
+            }
+            m_immediateContext->UpdateSubresource(modelElem->second->GetSkinningConstantBuffer().Get(), 0, nullptr, &cbSkinning, 0, 0);
+
+            CBChangesEveryFrame cbChangesEveryFrame =
+            {
+                .World = XMMatrixTranspose(modelElem->second->GetWorldMatrix()),
+                .OutputColor = modelElem->second->GetOutputColor(),
+            };
+            m_immediateContext->UpdateSubresource(modelElem->second->GetConstantBuffer().Get(), 0, nullptr, &cbChangesEveryFrame, 0, 0);
+
+            // Set shaders and constant buffers, shader resources, and samplers
+            m_immediateContext->VSSetShader(modelElem->second->GetVertexShader().Get(), nullptr, 0);
+            m_immediateContext->VSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
+            m_immediateContext->VSSetConstantBuffers(1, 1, m_cbChangeOnResize.GetAddressOf());
+            m_immediateContext->VSSetConstantBuffers(2, 1, modelElem->second->GetConstantBuffer().GetAddressOf());
+            m_immediateContext->VSSetConstantBuffers(3, 1, m_cbLights.GetAddressOf());
+            m_immediateContext->VSSetConstantBuffers(4, 1, modelElem->second->GetSkinningConstantBuffer().GetAddressOf());
+
+            m_immediateContext->PSSetShader(modelElem->second->GetPixelShader().Get(), nullptr, 0);
+            m_immediateContext->PSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
+            m_immediateContext->PSSetConstantBuffers(2, 1, modelElem->second->GetConstantBuffer().GetAddressOf());
+            m_immediateContext->PSSetConstantBuffers(3, 1, m_cbLights.GetAddressOf());
+            m_immediateContext->PSSetConstantBuffers(4, 1, modelElem->second->GetSkinningConstantBuffer().GetAddressOf());
+
+            if (modelElem->second->HasTexture())
+            {
+                for (UINT i = 0; i < modelElem->second->GetNumMeshes(); ++i)
+                {
+                    UINT MaterialIndex = modelElem->second->GetMesh(i).uMaterialIndex;
+                    m_immediateContext->PSSetShaderResources(0, 1, modelElem->second->GetMaterial(MaterialIndex).pDiffuse->GetTextureResourceView().GetAddressOf());
+                    m_immediateContext->PSSetSamplers(0, 1, modelElem->second->GetMaterial(MaterialIndex).pDiffuse->GetSamplerState().GetAddressOf());
+
+                    // Draw
+                    m_immediateContext->DrawIndexed(modelElem->second->GetMesh(i).uNumIndices,
+                        modelElem->second->GetMesh(i).uBaseIndex,
+                        modelElem->second->GetMesh(i).uBaseVertex);
+                }
+            }
+            else
+            {
+                // Draw
+                m_immediateContext->DrawIndexed(modelElem->second->GetNumIndices(), 0, 0);
             }
         }
         

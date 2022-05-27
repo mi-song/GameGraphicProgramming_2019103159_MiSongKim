@@ -124,9 +124,12 @@ namespace library
 
         // Create the buffers for the vertices attributes
 
+        std::string filePath = m_filePath.string();
+
         m_pScene = sm_pImporter->ReadFile(
             m_filePath.string().c_str(),
-            ASSIMP_LOAD_FLAGS
+            aiProcess_Triangulate | aiProcess_GenSmoothNormals | 
+            aiProcess_CalcTangentSpace | aiProcess_ConvertToLeftHanded);
         );
 
         if (m_pScene)
@@ -531,9 +534,7 @@ namespace library
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Model::initFromScene
-
       Summary:  Initialize all meshes in a given assimp scene
-
       Args:     ID3D11Device* pDevice
                   The Direct3D device to create the buffers
                 ID3D11DeviceContext* pImmediateContext
@@ -542,13 +543,9 @@ namespace library
                   Assimp scene
                 const std::filesystem::path& filePath
                   Path to the model
-
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    /*--------------------------------------------------------------------
-      TODO: Model::initFromScene definition (remove the comment)
-    --------------------------------------------------------------------*/
 
     HRESULT Model::initFromScene(
         _In_ ID3D11Device* pDevice,
@@ -559,40 +556,47 @@ namespace library
     {
         HRESULT hr = S_OK;
 
+        m_aMeshes.resize(pScene->mNumMeshes);
+
         UINT uNumVertices = 0u;
         UINT uNumIndices = 0u;
 
         countVerticesAndIndices(uNumVertices, uNumIndices, pScene);
+
         reserveSpace(uNumVertices, uNumIndices);
+
         initAllMeshes(pScene);
 
-        // Initializing materials
         hr = initMaterials(pDevice, pImmediateContext, pScene, filePath);
         if (FAILED(hr))
+        {
             return hr;
+        }
 
-        // Create AnimationData for the vertex and add it to m_aAnimationData
-         AnimationData animationData;
-         for (UINT i = 0u; i < m_aBoneData.size(); ++i)
-         {
-            animationData.aBoneIndices = static_cast<XMUINT4>(m_aBoneData[i].aBoneIds);
-            animationData.aBoneWeights = static_cast<XMFLOAT4>(m_aBoneData[i].aWeights);
-            m_aAnimationData.push_back(animationData);
-         }
-         
+        for (size_t i = 0; i < m_aVertices.size(); ++i)
+        {
+            m_aAnimationData.push_back(
+                AnimationData
+                {
+                    .aBoneIndices = XMUINT4(m_aBoneData.at(i).aBoneIds),
+                    .aBoneWeights = XMFLOAT4(m_aBoneData.at(i).aWeights)
+                }
+            );
+        }
+
         hr = initialize(pDevice, pImmediateContext);
         if (FAILED(hr))
+        {
             return hr;
+        }
 
-        return S_OK;
+        return hr;
     }
 
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Model::initMaterials
-
       Summary:  Initialize all materials in a given assimp scene
-
       Args:     ID3D11Device* pDevice
                   The Direct3D device to create the buffers
                 ID3D11DeviceContext* pImmediateContext
@@ -601,7 +605,6 @@ namespace library
                   Assimp scene
                 const std::filesystem::path& filePath
                   Path to the model
-
       Returns:  HRESULT
                   Status code
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
@@ -622,12 +625,16 @@ namespace library
         {
             const aiMaterial* pMaterial = pScene->mMaterials[i];
 
+            std::string szName = filePath.string() + std::to_string(i);
+            std::wstring pwszName(szName.length(), L' ');
+            std::copy(szName.begin(), szName.end(), pwszName.begin());
+            m_aMaterials.push_back(std::make_shared<Material>(pwszName));
+
             loadTextures(pDevice, pImmediateContext, parentDirectory, pMaterial, i);
         }
 
         return hr;
     }
-
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Model::initMeshBones
@@ -700,6 +707,10 @@ namespace library
             const aiVector3D& texCoord =
                 pMesh->HasTextureCoords(0u) ?
                 pMesh->mTextureCoords[0][i] : zero3d;
+            const aiVector3D& tangent = pMesh->HasTangentsAndBitangents() ?
+                pMesh->mTangents[i] : zero3d;
+            const aiVector3D& bitangent = pMesh->HasTangentsAndBitangents() ?
+                pMesh->mBitangents[i] : zero3d; 
 
             m_aVertices.push_back(
                 SimpleVertex
@@ -709,6 +720,14 @@ namespace library
                     .Normal = XMFLOAT3(normal.x, normal.y, normal.z)
                 }
             );
+
+            m_aNormalData.push_back(
+                NormalData
+                {
+                    .Tangent = XMFLOAT3(tangent.x, tangent.y, tangent.z),
+                    .Bitangent = XMFLOAT3(bitangent.x, bitangent.y, bitangent.z)
+                }
+            )
         }
 
         // Populate the index buffer 
@@ -841,6 +860,62 @@ namespace library
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   Model::loadNormalTexture
+      Summary:  Load a normal texture from given path
+      Args:     ID3D11Device* pDevice
+                  The Direct3D device to create the buffers
+                ID3D11DeviceContext* pImmediateContext
+                  The Direct3D context to set buffers
+                const std::filesystem::path& parentDirectory
+                  Parent path to the model
+                const aiMaterial* pMaterial
+                  Pointer to an assimp material object
+                UINT uIndex
+                  Index to a material
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    HRESULT Model::loadNormalTexture(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext, _In_ const std::filesystem::path& parentDirectory, _In_ const aiMaterial* pMaterial, _In_ UINT uIndex)
+    {
+        HRESULT hr = S_OK;
+        m_aMaterials[uIndex]->pNormal = nullptr;
+
+        if (pMaterial->GetTextureCount(aiTextureType_HEIGHT) > 0)
+        {
+            aiString aiPath;
+
+            if (pMaterial->GetTexture(aiTextureType_HEIGHT, 0u, &aiPath, nullptr, nullptr, nullptr, nullptr, nullptr) == AI_SUCCESS)
+            {
+                std::string szPath(aiPath.data);
+
+                if (szPath.substr(0ull, 2ull) == ".\\")
+                {
+                    szPath = szPath.substr(2ull, szPath.size() - 2ull);
+                }
+
+                std::filesystem::path fullPath = parentDirectory / szPath;
+
+                m_aMaterials[uIndex]->pNormal = std::make_shared<Texture>(fullPath);
+                m_bHasNormalMap = true;
+
+                if (FAILED(hr))
+                {
+                    OutputDebugString(L"Error loading normal texture \"");
+                    OutputDebugString(fullPath.c_str());
+                    OutputDebugString(L"\"\n");
+
+                    return hr;
+                }
+
+                OutputDebugString(L"Loaded normal texture \"");
+                OutputDebugString(fullPath.c_str());
+                OutputDebugString(L"\"\n");
+            }
+        }
+
+        return hr;
+    }
+
+
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Model::loadDiffuseTexture
 
       Summary:  Load a diffuse texture from given path
@@ -969,9 +1044,7 @@ namespace library
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Model::loadTextures
-
       Summary:  Load a specular texture from given path
-
       Args:     ID3D11Device* pDevice
                   The Direct3D device to create the buffers
                 ID3D11DeviceContext* pImmediateContext
@@ -983,13 +1056,7 @@ namespace library
                 UINT uIndex
                   Index to a material
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    HRESULT Model::loadTextures(
-        _In_ ID3D11Device* pDevice,
-        _In_ ID3D11DeviceContext* pImmediateContext,
-        _In_ const std::filesystem::path& parentDirectory,
-        _In_ const aiMaterial* pMaterial,
-        _In_ UINT uIndex
-    )
+    HRESULT Model::loadTextures(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext, _In_ const std::filesystem::path& parentDirectory, _In_ const aiMaterial* pMaterial, _In_ UINT uIndex)
     {
         HRESULT hr = loadDiffuseTexture(pDevice, pImmediateContext, parentDirectory, pMaterial, uIndex);
         if (FAILED(hr))
@@ -998,6 +1065,12 @@ namespace library
         }
 
         hr = loadSpecularTexture(pDevice, pImmediateContext, parentDirectory, pMaterial, uIndex);
+        if (FAILED(hr))
+        {
+            return hr;
+        }
+
+        hr = loadNormalTexture(pDevice, pImmediateContext, parentDirectory, pMaterial, uIndex);
         if (FAILED(hr))
         {
             return hr;

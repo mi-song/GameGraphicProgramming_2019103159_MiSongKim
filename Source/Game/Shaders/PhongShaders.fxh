@@ -13,8 +13,8 @@
   TODO: Declare a diffuse texture and a sampler state (remove the comment)
 --------------------------------------------------------------------*/
 
-Texture2D txDiffuse : register(t0);
-SamplerState samLinear : register(s0);
+Texture2D aTextures[2] : register(t0);
+SamplerState aSamplers[2] : register(s0);
 
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
@@ -61,6 +61,7 @@ cbuffer cbChangesEveryFrame : register(b2)
 {
     matrix World;
     float4 OutputColor;
+    bool HasNormalMap;
 }
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -111,6 +112,8 @@ struct PS_PHONG_INPUT
     float2 TexCoord : TEXCOORD0;
     float3 Normal : NORMAL;
     float3 WorldPosition : WORLDPOS;
+    float3 Tangent : TANGENT;
+    float3 Bitangnet : BITANGENT;
 };
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -152,6 +155,12 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
 
     output.TexCoord = input.TexCoord;
 
+    if(HasNormalMap)
+    {
+        output.Tangent = normalize( mul ( float4 ( input.Tangent, 0.0f ), World ).xyz);
+        output.Bitangnet = normalize( mul ( float4 ( input.Bitangent, 0.0f ), World).xyz);
+    }
+
     return output;
 }
 
@@ -181,6 +190,22 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 {
     float3 diffuse = 0;
     float3 specular = 0;
+    float3 normal = normalize(input.Normal);
+
+    if(HasNormalMap)
+    {
+        // Sample the pixel in the normal map
+        float4 bumpMap = aTextures[1].Sample(aSamplers[1], input.TexCoord);
+        
+        // Expand the range of the normal value from (0, +1) to (-1, +1)
+        bumpMap = (bumpMap * 2.0f) - 1.0f;
+
+        // Calculate the normal from the data in the normal map
+        float3 bumpNormal = (bumpMap.x * input.Tangent) + (bumpMap.y * input.Bitangent) + (bumpMap.z * normal);
+
+        // Normalize the resulting bump normal and replace existing normal
+        normal = normalize(bumpNormal);
+    }
 
     float3 viewDirection = normalize(input.WorldPosition.xyz - CameraPosition.xyz);
     

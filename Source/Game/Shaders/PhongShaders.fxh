@@ -143,16 +143,18 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
     PS_PHONG_INPUT output = (PS_PHONG_INPUT)0;
     
     // Space transformation
-    output.Position = mul( input.Position, World );
-    output.Position = mul( output.Position, View );
-    output.Position = mul( output.Position, Projection );
+    output.Position = mul(input.Position, input.Transform);
+    output.Position = mul(output.Position, World);
+    
+      // World position 
+    output.WorldPosition = output.Position; 
+    output.Position = mul(output.Position, View);
+    output.Position = mul(output.Position, Projection);
 
     // Compute the world normal 
-    output.Normal = normalize( mul ( float4 ( input.Normal, 0 ), World ).xyz);
-    
-    // World Position
-    output.WorldPosition = mul( input.Position, World ).xyz;
-
+    output.Normal = normalize(mul(float4(input.Normal, 0), input.Transform).xyz);
+    output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
+   
     output.TexCoord = input.TexCoord;
 
     if(HasNormalMap)
@@ -188,8 +190,6 @@ PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
 
 float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 {
-    float3 diffuse = 0;
-    float3 specular = 0;
     float3 normal = normalize(input.Normal);
 
     if(HasNormalMap)
@@ -207,13 +207,16 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
         normal = normalize(bumpNormal);
     }
 
+    float3 diffuse = 0;
+    float3 specular = 0;
+
     float3 viewDirection = normalize(input.WorldPosition.xyz - CameraPosition.xyz);
     
     for (uint i = 0; i < NUM_LIGHTS; i++)
     {
         // calculate diffuse 
         float3 lightDirection = normalize( input.WorldPosition - LightPositions[i].xyz );
-        diffuse += saturate( dot( input.Normal, -lightDirection ) * LightColors[i].xyz);
+        diffuse += saturate( dot( normal, -lightDirection ) * LightColors[i].xyz);
 
         // calculate specular 
         float3 reflectDirection = reflect(lightDirection, input.Normal);

@@ -147,6 +147,12 @@ PS_INPUT VSVoxel(VS_INPUT input)
    
     // output.TexCoord = input.TexCoord;
 
+    if(HasNormalMap)
+    {
+        output.Tangent = normalize( mul ( float4 ( input.Tangent, 0.0f ), World ).xyz);
+        output.Bitangnet = normalize( mul ( float4 ( input.Bitangent, 0.0f ), World).xyz);
+    }
+
     return output;
 }
 
@@ -159,6 +165,23 @@ PS_INPUT VSVoxel(VS_INPUT input)
 
 float4 PSVoxel(PS_INPUT input) : SV_Target
 {
+    float3 normal = normalize(input.Normal);
+
+    if(HasNormalMap)
+    {
+        // Sample the pixel in the normal map
+        float4 bumpMap = aTextures[1].Sample(aSamplers[1], input.TexCoord);
+        
+        // Expand the range of the normal value from (0, +1) to (-1, +1)
+        bumpMap = (bumpMap * 2.0f) - 1.0f;
+
+        // Calculate the normal from the data in the normal map
+        float3 bumpNormal = (bumpMap.x * input.Tangent) + (bumpMap.y * input.Bitangent) + (bumpMap.z * normal);
+
+        // Normalize the resulting bump normal and replace existing normal
+        normal = normalize(bumpNormal);
+    }
+
     float3 diffuse = 0;
     
     float3 viewDirection = normalize(input.WorldPosition.xyz - CameraPosition.xyz);
@@ -167,7 +190,7 @@ float4 PSVoxel(PS_INPUT input) : SV_Target
     {
         // calculate diffuse 
         float3 lightDirection = normalize(input.WorldPosition - LightPositions[i].xyz);
-        diffuse += saturate(dot(input.Normal, -lightDirection) * LightColors[i].xyz);
+        diffuse += saturate(dot(normal, -lightDirection) * LightColors[i].xyz);
     }
 
     // calculate ambient

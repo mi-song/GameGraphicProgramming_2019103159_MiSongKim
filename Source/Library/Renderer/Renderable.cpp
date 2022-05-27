@@ -27,13 +27,16 @@ namespace library
         : m_vertexBuffer(nullptr)
         , m_indexBuffer(nullptr)
         , m_constantBuffer(nullptr)
+        , m_normalBuffer(nullptr)
         , m_aMeshes(std::vector<BasicMeshEntry>())
-        , m_aMaterials(std::vector<Material>())
+        , m_aMaterials(std::vector<std::shared_ptr<Material>>())
+        , m_aNormalData(std::vector<NormalData>())
         , m_vertexShader(nullptr)
         , m_pixelShader(nullptr)
         , m_outputColor(outputColor)
         , m_world(XMMatrixIdentity())
         , m_padding()
+        , m_bHasNormalMap(FALSE)
     {}
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -77,6 +80,29 @@ namespace library
         };
 
         hr = pDevice->CreateBuffer(&bd, &InitData, m_vertexBuffer.GetAddressOf());
+        if (FAILED(hr))
+            return hr;
+
+        if (m_bHasNormalMap && !m_aNormalData.empty())
+        {
+            calculateNormalMapVectors();
+        }
+
+        // Create m_normalBuffer vertex buffer 
+        bd =
+        {
+            .ByteWidth = static_cast<UINT>(sizeof(NormalData) * (m_aNormalData.size())),
+            .Usage = D3D11_USAGE_DEFAULT,
+            .BindFlags = D3D11_BIND_VERTEX_BUFFER,
+            .CPUAccessFlags = 0
+        };
+
+        InitData =
+        {
+            .pSysMem = &m_aNormalData[0]
+        };
+
+        hr = pDevice->CreateBuffer(&bd, &InitData, m_normalBuffer.GetAddressOf());
         if (FAILED(hr))
             return hr;
 
@@ -298,7 +324,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::GetNormalBuffer definition (remove the comment)
     --------------------------------------------------------------------*/
-
+    ComPtr<ID3D11Buffer>& Renderable::GetNormalBuffer()
+    {
+        return m_normalBuffer;
+    }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetMaterial
@@ -314,6 +343,10 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::GetMaterial definition (remove the comment)
     --------------------------------------------------------------------*/
+    const std::shared_ptr<Material>& Renderable::GetMaterial(UINT uIndex) const
+    {
+        return m_aMaterials[uIndex];
+    }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetVertexShader
@@ -441,6 +474,11 @@ namespace library
       TODO: Renderable::HasNormalMap definition (remove the comment)
     --------------------------------------------------------------------*/
 
+    BOOL Renderable::HasNormalMap() const
+    {
+        return m_bHasNormalMap;
+    }
+
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::HasTexture
 
@@ -467,10 +505,10 @@ namespace library
 
       Summary:  Returns a material at given index
       
-      Returns:  const Material&
+      Returns:  const std::shared_ptr<Material>& 
                   Material at given index
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-    const Material& Renderable::GetMaterial(UINT uIndex) const
+    const std::shared_ptr<Material>& Renderable::GetMaterial(UINT uIndex) const
     {
         assert(uIndex < m_aMaterials.size());
 

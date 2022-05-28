@@ -118,7 +118,7 @@ struct PS_INPUT
     float3 Normal : NORMAL;
     float3 WorldPosition : WORLDPOS;
     float3 Tangent : TANGENT;
-    float3 Bitangnet : BITANGENT;
+    float3 Bitangent : BITANGENT;
 };
 
 //--------------------------------------------------------------------------------------
@@ -145,12 +145,12 @@ PS_INPUT VSVoxel(VS_INPUT input)
     output.Normal = normalize(mul(float4(input.Normal, 0), input.Transform).xyz);
     output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
    
-    // output.TexCoord = input.TexCoord;
+    output.TexCoord = input.TexCoord;
 
     if(HasNormalMap)
     {
         output.Tangent = normalize( mul ( float4 ( input.Tangent, 0.0f ), World ).xyz);
-        output.Bitangnet = normalize( mul ( float4 ( input.Bitangent, 0.0f ), World).xyz);
+        output.Bitangent = normalize( mul ( float4 ( input.Bitangent, 0.0f ), World).xyz);
     }
 
     return output;
@@ -196,5 +196,5 @@ float4 PSVoxel(PS_INPUT input) : SV_Target
     // calculate ambient
     float3 ambient = float3(0.1f, 0.1f, 0.1f);
 
-    return float4(diffuse + ambient, 1.0f) * OutputColor;
+    return float4(diffuse + ambient, 1.0f) * aTextures[0].Sample(aSamplers[0], input.TexCoord);
 }

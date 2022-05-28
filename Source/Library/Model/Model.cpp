@@ -128,9 +128,8 @@ namespace library
 
         m_pScene = sm_pImporter->ReadFile(
             m_filePath.string().c_str(),
-            aiProcess_Triangulate | aiProcess_GenSmoothNormals | 
+            aiProcess_Triangulate | aiProcess_GenSmoothNormals |
             aiProcess_CalcTangentSpace | aiProcess_ConvertToLeftHanded);
-        );
 
         if (m_pScene)
         {
@@ -139,7 +138,7 @@ namespace library
             m_globalInverseTransform = XMMatrixInverse(nullptr, m_globalInverseTransform);
             hr = initFromScene(pDevice, pImmediateContext, m_pScene, m_filePath);
             if (FAILED(hr))
-                return hr; 
+                return hr;
         }
         else
         {
@@ -206,7 +205,7 @@ namespace library
         if (m_pScene->HasAnimations())
         {
             XMMATRIX identity = XMMatrixIdentity();
-            FLOAT ticksPerSecond = static_cast<FLOAT>(m_pScene->mAnimations[0]->mTicksPerSecond != 0.0 ? 
+            FLOAT ticksPerSecond = static_cast<FLOAT>(m_pScene->mAnimations[0]->mTicksPerSecond != 0.0 ?
                 m_pScene->mAnimations[0]->mTicksPerSecond : 25.0f);
             FLOAT timeInTicks = m_timeSinceLoaded * ticksPerSecond;
             FLOAT animationTimeTicks = fmod(timeInTicks, static_cast<FLOAT>(m_pScene->mAnimations[0]->mDuration));
@@ -325,9 +324,6 @@ namespace library
 
     void Model::countVerticesAndIndices(_Inout_ UINT& uOutNumVertices, _Inout_ UINT& uOutNumIndices, _In_ const aiScene* pScene)
     {
-        m_aMeshes.resize(pScene->mNumMeshes);
-        m_aMaterials.resize(pScene->mNumMaterials);
-
         for (UINT i = 0u; i < m_aMeshes.size(); ++i)
         {
             m_aMeshes[i].uMaterialIndex = pScene->mMeshes[i]->mMaterialIndex;
@@ -340,18 +336,18 @@ namespace library
         }
     }
 
-     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
-         Method:   Model::findNodeAnimOrNull
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+        Method:   Model::findNodeAnimOrNull
 
-         Summary:  Find the aiNodeAnim with the givne node name in the given animation
+        Summary:  Find the aiNodeAnim with the givne node name in the given animation
 
-         Args:     const aiAnimation* pAnimation
-                     Pointer to an assimp animation object
-                   PCSTR pszNodeName
-                     Node name to find
+        Args:     const aiAnimation* pAnimation
+                    Pointer to an assimp animation object
+                  PCSTR pszNodeName
+                    Node name to find
 
-         Returns:  aiNodeAnim* or nullptr
-      M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+        Returns:  aiNodeAnim* or nullptr
+     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     const aiNodeAnim* Model::findNodeAnimOrNull(_In_ const aiAnimation* pAnimation, _In_ PCSTR pszNodeName)
     {
         for (UINT i = 0u; i < pAnimation->mNumChannels; ++i)
@@ -710,7 +706,7 @@ namespace library
             const aiVector3D& tangent = pMesh->HasTangentsAndBitangents() ?
                 pMesh->mTangents[i] : zero3d;
             const aiVector3D& bitangent = pMesh->HasTangentsAndBitangents() ?
-                pMesh->mBitangents[i] : zero3d; 
+                pMesh->mBitangents[i] : zero3d;
 
             m_aVertices.push_back(
                 SimpleVertex
@@ -727,7 +723,7 @@ namespace library
                     .Tangent = XMFLOAT3(tangent.x, tangent.y, tangent.z),
                     .Bitangent = XMFLOAT3(bitangent.x, bitangent.y, bitangent.z)
                 }
-            )
+            );
         }
 
         // Populate the index buffer 
@@ -1099,16 +1095,16 @@ namespace library
     void Model::readNodeHierarchy(_In_ FLOAT animationTimeTicks, _In_ const aiNode* pNode, _In_ const XMMATRIX& parentTransform)
     {
         const aiNodeAnim* pNodeAnim = findNodeAnimOrNull(m_pScene->mAnimations[0], pNode->mName.C_Str());
-       
+
         XMMATRIX nodeTransform = ConvertMatrix(pNode->mTransformation);
-        
+
         if (pNodeAnim)
         {
             // Calculate scaling matrix
             XMFLOAT3 scaling = XMFLOAT3();
             interpolateScaling(scaling, animationTimeTicks, pNodeAnim);
             XMMATRIX scalingMatrix = XMMatrixScaling(scaling.x, scaling.y, scaling.z);
-      
+
             // Calculate rotation matrix
             XMVECTOR rotation = XMVECTOR();
             interpolateRotation(rotation, animationTimeTicks, pNodeAnim);
@@ -1120,7 +1116,7 @@ namespace library
             XMMATRIX translationMatrix = XMMatrixTranslation(translation.x, translation.y, translation.z);
 
             // Replace NodeTransform with final transformation matrix 
-            nodeTransform = scalingMatrix * rotationMatrix * translationMatrix; 
+            nodeTransform = scalingMatrix * rotationMatrix * translationMatrix;
         }
 
         XMMATRIX globalTransform = nodeTransform * parentTransform;

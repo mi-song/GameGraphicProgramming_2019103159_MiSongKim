@@ -94,6 +94,8 @@ struct VS_PHONG_INPUT
     float4 Position : POSITION;
     float2 TexCoord : TEXCOORD0;
     float3 Normal : NORMAL;
+    float3 Tangent : TANGENT;
+    float3 Bitangent : BITANGENT;
 };
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -113,22 +115,7 @@ struct PS_PHONG_INPUT
     float3 Normal : NORMAL;
     float3 WorldPosition : WORLDPOS;
     float3 Tangent : TANGENT;
-    float3 Bitangnet : BITANGENT;
-};
-
-/*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
-  Struct:   PS_LIGHT_CUBE_INPUT
-
-  Summary:  Used as the input to the pixel shader, output of the
-            vertex shader
-C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
-/*--------------------------------------------------------------------
-  TODO: PS_LIGHT_CUBE_INPUT definition (remove the comment)
---------------------------------------------------------------------*/
-
-struct PS_LIGHT_CUBE_INPUT
-{
-    float4 Position : SV_POSITION;
+    float3 Bitangent : BITANGENT;
 };
 
 //--------------------------------------------------------------------------------------
@@ -143,16 +130,13 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
     PS_PHONG_INPUT output = (PS_PHONG_INPUT)0;
     
     // Space transformation
-    output.Position = mul(input.Position, input.Transform);
-    output.Position = mul(output.Position, World);
-    
-      // World position 
-    output.WorldPosition = output.Position; 
+    output.Position = mul(input.Position, World);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
 
+    output.WorldPosition = mul(input.Position, World);
+
     // Compute the world normal 
-    output.Normal = normalize(mul(float4(input.Normal, 0), input.Transform).xyz);
     output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
    
     output.TexCoord = input.TexCoord;
@@ -160,23 +144,8 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
     if(HasNormalMap)
     {
         output.Tangent = normalize( mul ( float4 ( input.Tangent, 0.0f ), World ).xyz);
-        output.Bitangnet = normalize( mul ( float4 ( input.Bitangent, 0.0f ), World).xyz);
+        output.Bitangent = normalize( mul ( float4 ( input.Bitangent, 0.0f ), World).xyz);
     }
-
-    return output;
-}
-
-/*--------------------------------------------------------------------
-  TODO: Vertex Shader function VSLightCube definition (remove the comment)
---------------------------------------------------------------------*/
-
-PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
-{
-    PS_LIGHT_CUBE_INPUT output = (PS_LIGHT_CUBE_INPUT)0;
-
-    output.Position = mul(input.Position, World);
-    output.Position = mul(output.Position, View);
-    output.Position = mul(output.Position, Projection);
 
     return output;
 }
@@ -229,14 +198,5 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
     // calculate ambient
     float3 ambient = float3(0.2f, 0.2f, 0.2f);
 
-    return float4( diffuse + specular + ambient, 1.0f) * txDiffuse.Sample(samLinear, input.TexCoord);
-}
-
-/*--------------------------------------------------------------------
-  TODO: Pixel Shader function PSLightCube definition (remove the comment)
---------------------------------------------------------------------*/
-
-float4 PSLightCube(PS_LIGHT_CUBE_INPUT input) : SV_Target
-{
-    return OutputColor;
+    return float4( diffuse + specular + ambient, 1.0f) * aTextures[0].Sample(aSamplers[0], input.TexCoord);
 }

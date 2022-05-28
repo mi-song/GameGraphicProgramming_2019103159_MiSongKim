@@ -42,7 +42,7 @@ namespace library
 
     HRESULT Texture::Initialize(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pImmediateContext)
     {
-        HRESULT hr; 
+        HRESULT hr;
 
         // Load the Texture
         hr = CreateWICTextureFromFile(pDevice, pImmediateContext, m_filePath.c_str(), nullptr, m_textureRV.GetAddressOf());
@@ -63,7 +63,7 @@ namespace library
         hr = pDevice->CreateSamplerState(&sampDesc, m_samplerLinear.GetAddressOf());
         if (FAILED(hr))
             return hr;
-        
+
 
         return S_OK;
     }

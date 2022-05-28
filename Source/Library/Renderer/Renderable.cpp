@@ -83,7 +83,7 @@ namespace library
         if (FAILED(hr))
             return hr;
 
-        if (m_bHasNormalMap && !m_aNormalData.empty())
+        if (HasTexture() && m_aNormalData.empty())
         {
             calculateNormalMapVectors();
         }
@@ -343,10 +343,12 @@ namespace library
     /*--------------------------------------------------------------------
       TODO: Renderable::GetMaterial definition (remove the comment)
     --------------------------------------------------------------------*/
+    /*
     const std::shared_ptr<Material>& Renderable::GetMaterial(UINT uIndex) const
     {
         return m_aMaterials[uIndex];
     }
+    */
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetVertexShader

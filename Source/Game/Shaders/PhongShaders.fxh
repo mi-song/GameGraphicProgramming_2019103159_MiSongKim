@@ -160,7 +160,7 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
 float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 {
     float3 normal = normalize(input.Normal);
-
+    
     if(HasNormalMap)
     {
         // Sample the pixel in the normal map
@@ -174,7 +174,7 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 
         // Normalize the resulting bump normal and replace existing normal
         normal = normalize(bumpNormal);
-    }
+    }  
 
     float3 diffuse = 0;
     float3 specular = 0;
@@ -188,7 +188,7 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
         diffuse += saturate( dot( normal, -lightDirection ) * LightColors[i].xyz);
 
         // calculate specular 
-        float3 reflectDirection = reflect(lightDirection, input.Normal);
+        float3 reflectDirection = reflect(lightDirection, normal);
         if (diffuse.x > 0)
         {
             specular += pow(saturate(dot(reflectDirection, -viewDirection)), 32.0f) * LightColors[i].xyz;
@@ -198,5 +198,6 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
     // calculate ambient
     float3 ambient = float3(0.2f, 0.2f, 0.2f);
 
+    // return float4((normal + 1.0f) / 2.0f,  1.0f);
     return float4( diffuse + specular + ambient, 1.0f) * aTextures[0].Sample(aSamplers[0], input.TexCoord);
 }

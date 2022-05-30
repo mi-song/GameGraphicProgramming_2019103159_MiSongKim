@@ -590,7 +590,7 @@ namespace library
                 {
                     sizeof(SimpleVertex),
                     sizeof(NormalData),
-                    sizeof(InstanceData)
+                    sizeof(AnimationData)
                 };
                 UINT aOffsets[3] = { 0u, 0u, 0u };
 

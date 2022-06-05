@@ -128,7 +128,7 @@ namespace library
 
         D3D11_SUBRESOURCE_DATA initData =
         {
-            .pSysMem = &m_aInstanceData[0]
+            .pSysMem = m_aInstanceData.data()
         };
 
         hr = pDevice->CreateBuffer(&bd, &initData, m_instanceBuffer.GetAddressOf());

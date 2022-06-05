@@ -1,1 +1,1 @@
-#include "SkinningShaders.fxh"
+#include "PhongShaders.fxh"

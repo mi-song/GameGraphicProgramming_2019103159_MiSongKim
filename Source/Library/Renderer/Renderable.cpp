@@ -83,7 +83,7 @@ namespace library
         if (FAILED(hr))
             return hr;
 
-        if (HasTexture() && m_aNormalData.empty())
+        if (m_aNormalData.empty())
         {
             calculateNormalMapVectors();
         }
@@ -99,7 +99,7 @@ namespace library
 
         InitData =
         {
-            .pSysMem = &m_aNormalData[0]
+            .pSysMem = m_aNormalData.data()
         };
 
         hr = pDevice->CreateBuffer(&bd, &InitData, m_normalBuffer.GetAddressOf());

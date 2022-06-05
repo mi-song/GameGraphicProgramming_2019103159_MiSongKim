@@ -4,7 +4,9 @@
 // Copyright (c) Kyung Hee University.
 //--------------------------------------------------------------------------------------
 
-#define NUM_LIGHTS (2)
+#define NUM_LIGHTS (1)
+#define NEAR_PLANE (0.01f)
+#define FAR_PLANE (1000.0f)
 
 //--------------------------------------------------------------------------------------
 // Global Variables
@@ -12,6 +14,9 @@
 /*--------------------------------------------------------------------
   TODO: Declare a diffuse texture and a sampler state (remove the comment)
 --------------------------------------------------------------------*/
+
+Texture2D shadowMapTexture : register(t2);
+SamplerState shadowMapSampler : register(s2);
 
 Texture2D aTextures[2] : register(t0);
 SamplerState aSamplers[2] : register(s0);
@@ -77,7 +82,9 @@ cbuffer cbLights : register(b3)
 {
     float4 LightPositions[NUM_LIGHTS];
     float4 LightColors[NUM_LIGHTS];
-}
+	matrix LightViews[NUM_LIGHTS];
+	matrix LightProjections[NUM_LIGHTS];
+};
 
 //--------------------------------------------------------------------------------------
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -116,6 +123,12 @@ struct PS_PHONG_INPUT
     float3 WorldPosition : WORLDPOS;
     float3 Tangent : TANGENT;
     float3 Bitangent : BITANGENT;
+    float4 LightViewPosition : TEXCOORD1;
+};
+
+struct PS_LIGHT_CUBE_INPUT
+{
+    float4 Position : SV_POSITION;
 };
 
 //--------------------------------------------------------------------------------------
@@ -136,6 +149,10 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
 
     output.WorldPosition = mul(input.Position, World);
 
+    output.LightViewPosition = mul(input.Position, World);
+    output.LightViewPosition = mul(output.LightViewPosition, LightViews[0]);
+    output.LightViewPosition = mul(output.LightViewPosition, LightProjections[0]);
+
     // Compute the world normal 
     output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
    
@@ -150,6 +167,23 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
     return output;
 }
 
+PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
+{
+    PS_LIGHT_CUBE_INPUT output = (PS_LIGHT_CUBE_INPUT) 0;
+
+    output.Position = mul(input.Position, World);
+    output.Position = mul(output.Position, View);
+    output.Position = mul(output.Position, Projection);
+
+    return output;
+}
+
+float LinearizeDepth(float depth)
+{
+    float z = depth * 2.0 - 1.0;
+    return ((2.0 * NEAR_PLANE * FAR_PLANE) / (FAR_PLANE + NEAR_PLANE - z * (FAR_PLANE - NEAR_PLANE))) / FAR_PLANE;
+}
+
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
@@ -159,6 +193,22 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
 
 float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 {
+    float4 color = aTextures[0].Sample(aSamplers[0], input.TexCoord);
+    float3 ambient = float3(0.1f, 0.1f, 0.1f) * color.rgb;
+
+    float2 depthTexCoord;
+    depthTexCoord.x = input.LightViewPosition.x / input.LightViewPosition.w / 2.0f + 0.5f;
+    depthTexCoord.y = -input.LightViewPosition.y / input.LightViewPosition.w / 2.0f + 0.5f;
+
+    float closestDepth = shadowMapTexture.Sample(shadowMapSampler, depthTexCoord).r;
+    float currentDepth = input.LightViewPosition.z / input.LightViewPosition.w;
+
+    closestDepth = LinearizeDepth(closestDepth);
+    currentDepth = LinearizeDepth(currentDepth);
+
+    if (currentDepth > closestDepth + 0.001f)
+        return float4(ambient, 1.0f);
+
     float3 normal = normalize(input.Normal);
     
     if(HasNormalMap)
@@ -195,9 +245,11 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
         }
     }
 
-    // calculate ambient
-    float3 ambient = float3(0.2f, 0.2f, 0.2f);
-
     // return float4((normal + 1.0f) / 2.0f,  1.0f);
     return float4( diffuse + specular + ambient, 1.0f) * aTextures[0].Sample(aSamplers[0], input.TexCoord);
+}
+
+float4 PSLightCube(PS_LIGHT_CUBE_INPUT input) : SV_Target
+{
+    return OutputColor;
 }

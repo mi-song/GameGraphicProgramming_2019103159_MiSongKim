@@ -14,7 +14,7 @@ namespace library
       TODO: PointLight::PointLight definition (remove the comment)
     --------------------------------------------------------------------*/
 
-    PointLight::PointLight(_In_ const XMFLOAT4& position, _In_ const XMFLOAT4& color)
+    PointLight::PointLight(_In_ const XMFLOAT4& position, _In_ const XMFLOAT4& color, _In_ FLOAT attenuationDistance)
         : m_position(position)
         , m_color(color)
         , m_eye()
@@ -22,6 +22,7 @@ namespace library
         , m_up(DEFAULT_UP)
         , m_view(XMMatrixIdentity())
         , m_projection(XMMatrixIdentity())
+        , m_attenuationDistance(attenuationDistance)
     { }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -106,6 +107,23 @@ namespace library
     const XMFLOAT4& PointLight::GetColor() const
     {
         return m_color;
+    }
+
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   PointLight::GetAttenuationDistance
+
+      Summary:  Returns the attenuation distance
+
+      Returns:  FLOAT
+                  Attenuation distance
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    /*--------------------------------------------------------------------
+      TODO: PointLight::GetAttenuationDistance definition (remove the comment)
+    --------------------------------------------------------------------*/
+
+    FLOAT PointLight::GetAttenuationDistance() const
+    {
+        return m_attenuationDistance;
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M

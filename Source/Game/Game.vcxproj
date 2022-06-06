@@ -111,6 +111,7 @@
     <ClInclude Include="Light\RotatingPointLight.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\CubeMap.fxh" />
     <None Include="Shaders\PhongShaders.fxh" />
     <None Include="Shaders\Shaders.fxh" />
     <None Include="Shaders\ShadowShaders.fxh" />
@@ -118,6 +119,8 @@
     <None Include="Shaders\VoxelShaders.fxh" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shaders\CubeMap_PS.hlsl" />
+    <FxCompile Include="Shaders\CubeMap_VS.hlsl" />
     <FxCompile Include="Shaders\PS.hlsl" />
     <FxCompile Include="Shaders\VS.hlsl" />
   </ItemGroup>

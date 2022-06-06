@@ -5,6 +5,10 @@
 // Licensed under the MIT License (MIT).
 //--------------------------------------------------------------------------------------
 
+#define NUM_LIGHTS (1)
+#define NEAR_PLANE (0.01f)
+#define FAR_PLANE (1000.0f)
+
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
@@ -12,8 +16,8 @@
   TODO: Declare a diffuse texture and a sampler state (remove the comment)
 --------------------------------------------------------------------*/
 
-Texture2D txDiffuse : register(t0);
-SamplerState samLinear : register(s0);
+TextureCube skyBox : register(t3);
+SamplerState samLinear : register(s3);
 
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
@@ -30,6 +34,7 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 cbuffer cbChangeOnCameraMovement : register(b0)
 {
     matrix View;
+    float4 CameraPosition;
 };
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -58,6 +63,8 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 cbuffer cbChangesEveryFrame : register(b2)
 {
     matrix World;
+    float4 OutputColor;
+    bool HasNormalMap;
 };
 
 //--------------------------------------------------------------------------------------
@@ -72,8 +79,9 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 
 struct VS_INPUT
 {
-    float4 Pos : POSITION;
-    float2 Tex : TEXCOORD0;
+    float4 Position : POSITION;
+    float2 TexCoord : TEXCOORD0;
+    float3 Normal : NORMAL;
 };
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -88,8 +96,10 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 
 struct PS_INPUT
 {
-    float4 Pos : SV_POSITION;
-    float2 Tex : TEXCOORD0;
+    float4 Position : SV_POSITION;
+    float2 TexCoord : TEXCOORD0;
+    float3 Normal : NORMAL;
+    float3 WorldPosition : WORLDPOS;
 };
 
 //--------------------------------------------------------------------------------------
@@ -99,14 +109,20 @@ struct PS_INPUT
   TODO: Vertex Shader function VS definition (remove the comment)
 --------------------------------------------------------------------*/
 
-PS_INPUT VS(VS_INPUT input)
+PS_INPUT VSEnvironmentMap(VS_INPUT input)
 {
-    PS_INPUT output = (PS_INPUT)0;
-    output.Pos = mul(input.Pos, World);
-    output.Pos = mul(output.Pos, View);
-    output.Pos = mul(output.Pos, Projection);
-    output.Tex = input.Tex;
+    PS_INPUT output = (PS_INPUT) 0;
+    
+    output.Position = mul(input.Position, World);
+    output.Position = mul(output.Position, View);
+    output.Position = mul(output.Position, Projection);
+    
+    output.WorldPosition = mul(input.Position, World);
+    
+    output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
 
+    output.TexCoord = input.TexCoord;
+    
     return output;
 }
 
@@ -117,7 +133,12 @@ PS_INPUT VS(VS_INPUT input)
   TODO: Pixel Shader function PS definition (remove the comment)
 --------------------------------------------------------------------*/
 
-float4 PS(PS_INPUT input) : SV_Target
+float4 PSEnvironmentMap(PS_INPUT input) : SV_Target
 {
-    return txDiffuse.Sample(samLinear, input.Tex);
+    float3 viewDirection = normalize( input.WorldPosition - CameraPosition );
+    float3 reflectDirection = reflect(viewDirection, input.Normal);
+
+    float3 environment = skyBox.Sample(samLinear, reflectDirection).rgb;
+
+    return float4(environment, 1.0f);
 }

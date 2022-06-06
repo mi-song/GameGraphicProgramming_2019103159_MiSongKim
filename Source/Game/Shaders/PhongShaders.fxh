@@ -78,12 +78,16 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
   TODO: cbLights definition (remove the comment)
 --------------------------------------------------------------------*/
 
+struct PointLight
+{
+   float4 Position;
+   float4 Color;
+   float4 AttenuationDistance;
+};
+
 cbuffer cbLights : register(b3)
 {
-    float4 LightPositions[NUM_LIGHTS];
-    float4 LightColors[NUM_LIGHTS];
-	matrix LightViews[NUM_LIGHTS];
-	matrix LightProjections[NUM_LIGHTS];
+    PointLight PointLights[NUM_LIGHTS];
 };
 
 //--------------------------------------------------------------------------------------
@@ -149,9 +153,9 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
 
     output.WorldPosition = mul(input.Position, World);
 
-    output.LightViewPosition = mul(input.Position, World);
-    output.LightViewPosition = mul(output.LightViewPosition, LightViews[0]);
-    output.LightViewPosition = mul(output.LightViewPosition, LightProjections[0]);
+    // output.LightViewPosition = mul(input.Position, World);
+    // output.LightViewPosition = mul(output.LightViewPosition, LightViews[0]);
+    // output.LightViewPosition = mul(output.LightViewPosition, LightProjections[0]);
 
     // Compute the world normal 
     output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
@@ -194,7 +198,8 @@ float LinearizeDepth(float depth)
 float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 {
     float4 color = aTextures[0].Sample(aSamplers[0], input.TexCoord);
-    float3 ambient = float3(0.1f, 0.1f, 0.1f) * color.rgb;
+    // float3 ambient = float3(0.1f, 0.1f, 0.1f) * color.rgb;
+    float3 ambient = float3(0.1f, 0.1f, 0.1f);
 
     float2 depthTexCoord;
     depthTexCoord.x = input.LightViewPosition.x / input.LightViewPosition.w / 2.0f + 0.5f;
@@ -233,16 +238,18 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
     
     for (uint i = 0; i < NUM_LIGHTS; i++)
     {
-        // calculate diffuse 
-        float3 lightDirection = normalize( input.WorldPosition - LightPositions[i].xyz );
-        diffuse += saturate( dot( normal, -lightDirection ) * LightColors[i].xyz);
+        float3 lightDirection = normalize( input.WorldPosition - PointLights[i].Position.xyz );
 
-        // calculate specular 
+        float distance = PointLights[i].Position.xyz - input.WorldPosition;
+        float distanceSquared = dot(distance, distance);
+
+        float lightAttenuation = PointLights[i].AttenuationDistance.z / (distanceSquared + 0.000001);
+
         float3 reflectDirection = reflect(lightDirection, normal);
-        if (diffuse.x > 0)
-        {
-            specular += pow(saturate(dot(reflectDirection, -viewDirection)), 32.0f) * LightColors[i].xyz;
-        }
+
+        ambient += float3(0.1f, 0.1f, 0.1f) * PointLights[i].Color.xyz * lightAttenuation;
+        diffuse += saturate( dot( normal, -lightDirection ) * PointLights[i].Color.xyz) * lightAttenuation;
+        specular += pow(saturate(dot(reflectDirection, -viewDirection)), 32.0f) * PointLights[i].Color.xyz * lightAttenuation;
     }
 
     // return float4((normal + 1.0f) / 2.0f,  1.0f);

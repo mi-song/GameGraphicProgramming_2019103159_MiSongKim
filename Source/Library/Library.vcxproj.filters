@@ -108,9 +108,6 @@
     <ClInclude Include="Renderer\Renderer.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Light\PointLight.h">
-      <Filter>Header Files\Light</Filter>
-    </ClInclude>
     <ClInclude Include="Model\Model.h">
       <Filter>Header Files\Model</Filter>
     </ClInclude>
@@ -140,6 +137,15 @@
     </ClInclude>
     <ClInclude Include="Shader\ShadowVertexShader.h">
       <Filter>Header Files\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Skybox.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader\SkyMapVertexShader.h">
+      <Filter>Header Files\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Light\PointLight.h">
+      <Filter>Header Files\Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -175,9 +181,6 @@
     <ClCompile Include="Shader\VertexShader.cpp">
       <Filter>Source Files\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="Light\PointLight.cpp">
-      <Filter>Source Files\Light</Filter>
-    </ClCompile>
     <ClCompile Include="Model\Model.cpp">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
@@ -207,6 +210,15 @@
     </ClCompile>
     <ClCompile Include="Shader\ShadowVertexShader.cpp">
       <Filter>Source Files\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Skybox.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader\SkyMapVertexShader.cpp">
+      <Filter>Source Files\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Light\PointLight.cpp">
+      <Filter>Source Files\Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

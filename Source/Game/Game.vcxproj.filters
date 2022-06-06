@@ -76,12 +76,21 @@
     <None Include="Shaders\ShadowShaders.fxh">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\CubeMap.fxh">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\PS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\VS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\CubeMap_PS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\CubeMap_VS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
